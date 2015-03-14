@@ -9,6 +9,8 @@ use CocktailRater\Domain\RecipeList;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Stars;
+use CocktailRater\Domain\MeasuredIngredient;
+use CocktailRater\Domain\Method;
 
 /**
  * Defines application features from the specific context.
@@ -95,5 +97,70 @@ class FeatureContext implements Context, SnippetAcceptingContext
         rsort($sorted);
 
         PHPUnit_Framework_Assert::assertEquals($sorted, $values);
+    }
+
+    /**
+     * @Given a list of measured ingredients:
+     */
+    public function aListOfMeasuredIngredients(TableNode $table)
+    {
+        $aListOfMeasuredIngredients = [];
+
+        foreach ($table->getColumnsHash() as $ingredient) {
+            $aListOfMeasuredIngredients[] = new MeasuredIngredient(
+                new Ingredient($ingredient['name']),
+                new Amount($ingredients['amount'], $ingredients['units'])
+            );
+        }
+
+        $this->measuredIngredientsList = $aListOfMeasuredIngredients;
+    }
+
+    /**
+     * @Given a method:
+     */
+    public function aMethod(PyStringNode $string)
+    {
+        $this->method = new Method((string) $string);
+    }
+
+    /**
+     * @Given there's a recipe for :name by user :username with :stars stars, the measured ingredients and method added to the reciped list
+     */
+    public function thereSARecipeForByUserWithStarsTheMeasuredIngredientsAndMethodAddedToTheRecipedList($name, $username, $stars)
+    {
+        $this->name = $name;
+        $this->user = new User($username);
+        $this->rating = new Stars($stars);
+
+        $aRecipe = new Recipe(
+            $this->name,
+            $this->user,
+            $this->rating,
+            $this->measuredIngredientsList,
+            $this->method
+        );
+
+        $this->recipeList->add($aRecipe);
+    }
+
+    /**
+     * @When I fetch the recipe :recipeName by user :username
+     */
+    public function iFetchTheRecipeByUser($recipeName, $username)
+    {
+        $this->theRecipe = $this->recipeList->findByNameAndUser($recipeName, new User($username));
+    }
+
+    /**
+     * @Then the recipe should have name, user, rating, measured ingredients and method
+     */
+    public function theRecipeShouldHaveNameUserRatingMeasuredIngredientsAndMethod()
+    {
+        PHPUnit_Framework_Assert::assertEquals($this->name, $this->theRecipe->getName());
+        PHPUnit_Framework_Assert::assertEquals($this->user, $this->theRecipe->getUser());
+        PHPUnit_Framework_Assert::assertEquals($this->rating, $this->theRecipe->getRating());
+        PHPUnit_Framework_Assert::assertEquals($this->measuredIngredientsList, $this->theRecipe->getMeasauredIngredients());
+        PHPUnit_Framework_Assert::assertEquals($this->method, $this->theRecipe->getMethod());
     }
 }
