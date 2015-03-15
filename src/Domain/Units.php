@@ -2,12 +2,12 @@
 
 namespace CocktailRater\Domain;
 
-final class Method
+final class Units
 {
     /** @var string */
     private $value;
 
-    /** @param string $value */
+    /** @var string $value */
     public function __construct($value)
     {
         $this->value = $value;

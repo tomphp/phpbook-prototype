@@ -5,7 +5,7 @@ Feature: A visitor can view a recipe
 
   Scenario: Viewing a recipe
     Given a list of measured ingredients:
-      | name        | amount | unit  |
+      | name        | amount | units |
       | White Run   | 2      | fl oz |
       | Mint Leaves | 8      |       |
       | Lime        | 1      |       |
@@ -16,5 +16,5 @@ Feature: A visitor can view a recipe
       Instructions to make a Mojito.
       """
     And there's a recipe for "Mojito" by user "tom" with 5 stars, the measured ingredients and method added to the reciped list
-    When I fetch the recipe "Mojito" by user "tom"
-    Then the recipe should have name, user, rating, measured ingredients and method
+    When I fetch and view the recipe "Mojito" by user "tom"
+    Then I should be viewing the name, user, rating, measured ingredients and method of the recipe

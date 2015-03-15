@@ -14,10 +14,6 @@ final class RecipeList
     public function add(Recipe $recipe)
     {
         $this->recipes[] = $recipe;
-
-        usort($this->recipes, function ($a, $b) {
-            return $b->isHigherRatedThan($a);
-        });
     }
 
     /**
@@ -27,7 +23,7 @@ final class RecipeList
      *
      * @throws RecipeNotFoundException
      */
-    public function findByNameAndUser($name, User $user)
+    public function fetchByNameAndUser($name, User $user)
     {
         $theRecipe = null;
 
@@ -42,8 +38,18 @@ final class RecipeList
         return $theRecipe;
     }
 
-    public function findAll()
+    /** @return array */
+    public function view()
     {
-        return $this->recipes;
+        $recipes = array_map(function (Recipe $recipe) {
+            return $recipe->view();
+        }, $this->recipes);
+
+        // @todo sort objects instead
+        usort($recipes, function ($a, $b) {
+            return $a['stars'] < $b['stars'];
+        });
+
+        return $recipes;
     }
 }

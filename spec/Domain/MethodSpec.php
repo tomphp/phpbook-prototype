@@ -7,8 +7,10 @@ use Prophecy\Argument;
 
 class MethodSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    function it_provides_values()
     {
-        $this->shouldHaveType('CocktailRater\Domain\Method');
+        $this->beConstructedWith('test method');
+
+        $this->getValue()->shouldReturn('test method');
     }
 }

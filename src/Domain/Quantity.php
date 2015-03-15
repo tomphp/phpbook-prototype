@@ -2,18 +2,18 @@
 
 namespace CocktailRater\Domain;
 
-final class Method
+final class Quantity
 {
-    /** @var string */
-    private $value;
+    /** @var number */
+    private $quantity;
 
-    /** @param string $value */
+    /** @param number $value */
     public function __construct($value)
     {
         $this->value = $value;
     }
 
-    /** @return string */
+    /** @return number */
     public function getValue()
     {
         return $this->value;

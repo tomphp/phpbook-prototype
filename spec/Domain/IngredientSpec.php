@@ -7,8 +7,10 @@ use Prophecy\Argument;
 
 class IngredientSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    function it_returns_its_name()
     {
-        $this->shouldHaveType('CocktailRater\Domain\Ingredient');
+        $this->beConstructedWith('test ingredient');
+
+        $this->getName()->shouldReturn('test ingredient');
     }
 }
