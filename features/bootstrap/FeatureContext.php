@@ -218,34 +218,34 @@ class FeatureContext implements Context, SnippetAcceptingContext
         return $sorted === $list;
     }
 
-    /**
-     * @Given I am a prospective user with username :username, email :email and password :password
-     */
-    public function iAmAProspectiveUserWithUsernameEmailAndPassword($username, $email, $password)
-    {
-        $this->user = new ProspectiveUser(
-            new Username($username),
-            new Email($email),
-            new Password($password)
-        );
-    }
-
-    /**
-     * @When I register user :username the authentication service
-     */
-    public function iRegisterUserTheAuthenticationService($username)
-    {
-        // @todo username required?
-        $this->authenticationService($this->user);
-    }
-
-    /**
-     * @Then I should should be able to log in to the site as user :username
-     */
-    public function iShouldShouldBeAbleToLogInToTheSiteAsUser($username, $email)
-    {
-        $this->authenticationService->logIn(new Username($username), new Email($email));
-
-        Assert::assertTrue($this->authenticationService->isLoggedIn());
-    }
+//     /**
+//      * @Given I am a prospective user with username :username, email :email and password :password
+//      */
+//     public function iAmAProspectiveUserWithUsernameEmailAndPassword($username, $email, $password)
+//     {
+//         $this->user = new ProspectiveUser(
+//             new Username($username),
+//             new Email($email),
+//             new Password($password)
+//         );
+//     }
+//
+//     /**
+//      * @When I register user :username the authentication service
+//      */
+//     public function iRegisterUserTheAuthenticationService($username)
+//     {
+//         // @todo username required?
+//         $this->authenticationService($this->user);
+//     }
+//
+//     /**
+//      * @Then I should should be able to log in to the site as user :username
+//      */
+//     public function iShouldShouldBeAbleToLogInToTheSiteAsUser($username, $email)
+//     {
+//         $this->authenticationService->logIn(new Username($username), new Email($email));
+//
+//         Assert::assertTrue($this->authenticationService->isLoggedIn());
+//     }
 }
