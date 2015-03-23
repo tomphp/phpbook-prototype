@@ -2,6 +2,8 @@
 
 namespace CocktailRater\Domain;
 
+use Assert\Assertion;
+
 final class Quantity
 {
     /** @var number */
@@ -10,6 +12,9 @@ final class Quantity
     /** @param number $value */
     public function __construct($value)
     {
+        // @todo
+        //Assertion::numeric($value);
+
         $this->value = $value;
     }
 

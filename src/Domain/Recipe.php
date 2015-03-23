@@ -2,6 +2,8 @@
 
 namespace CocktailRater\Domain;
 
+use Assert\Assertion;
+
 final class Recipe
 {
     /** @var string */
@@ -26,6 +28,8 @@ final class Recipe
         MeasuredIngredientList $ingredients,
         Method $method
     ) {
+        Assertion::string($name);
+
         $this->name        = $name;
         $this->user        = $user;
         $this->rating      = $rating;

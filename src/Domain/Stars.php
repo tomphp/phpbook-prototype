@@ -2,6 +2,8 @@
 
 namespace CocktailRater\Domain;
 
+use Assert\Assertion;
+
 final class Stars
 {
     /** @var number */
@@ -10,6 +12,8 @@ final class Stars
     /** @param number $value */
     public function __construct($value)
     {
+        Assertion::numeric($value);
+
         $this->value = (int) $value;
     }
 

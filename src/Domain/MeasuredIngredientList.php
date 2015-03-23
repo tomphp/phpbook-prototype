@@ -2,6 +2,8 @@
 
 namespace CocktailRater\Domain;
 
+use Assert\Assertion;
+
 final class MeasuredIngredientList
 {
     /** @var MeasuredIngredient[] */
@@ -10,6 +12,8 @@ final class MeasuredIngredientList
     /** @var MeasuredIngredient[] $ingredients */
     public function __construct(array $ingredients)
     {
+        Assertion::allIsInstanceOf($ingredients, MeasuredIngredient::class);
+
         $this->ingredients = $ingredients;
     }
 
