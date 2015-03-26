@@ -1,0 +1,21 @@
+default:
+    extensions:
+        Behat\MinkExtension:
+            base_url:  'http://localhost:1080'
+            sessions:
+                default:
+                    goutte: ~
+
+    suites:
+        domain:
+            paths: [ %paths.base%/features ]
+            contexts:
+                - CommonContext
+                - DomainContext
+
+        customer:
+            paths: [ %paths.base%/features ]
+            contexts:
+                - CommonContext
+                - WebContext
+                - Behat\MinkExtension\Context\MinkContext

@@ -14,6 +14,7 @@ final class Quantity
     {
         // @todo
         //Assertion::numeric($value);
+        //Assertion::positive($value);
 
         $this->value = $value;
     }
