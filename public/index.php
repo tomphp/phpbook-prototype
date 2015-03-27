@@ -1,35 +1,31 @@
 <?php
 
+use Slim\Slim;
+use CocktailRater\Domain\RecipeList;
+use CocktailRater\Domain\User;
+use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
+
 require __DIR__ . '/../vendor/autoload.php';
 
-?>
-<!DOCTYPE html>
-<html>
-    <head>
-    </head>
-    <body>
-        <p>There are no cocktail recipes available.</p>
-        <table id="recipes">
-            <tbody>
-                <tr>
-                    <td>Mojito</td>
-                    <td>tom</td>
-                    <td>5 stars</td>
-                </tr>
-                <tr>
-                    <td>Daquiri</td>
-                    <td>clare</td>
-                    <td>4 stars</td>
-                </tr>
-            </tbody>
-        <table>
+$app = new Slim();
+$app->view()->setTemplatesDirectory(__DIR__ . '/../templates/');
 
-        <div>
-            <div class="name">Mojito</div>
-            <div class="user">tom</div>
-            <div class="rating">5 stars</div>
-            <div class="ingedients">Mojito</div>
-            <div class="method">Instructions to make a Mojito.</div>
-        </div>
-    </body>
-</html>
+$app->recipeList = new RecipeList(new FileSystemRecipeRepository(__DIR__ . '/../test-fsdb'));
+
+$app->get('/list-recipes', function () use ($app) {
+    $app->render(
+        'list-recipes.phtml',
+        ['recipes' => $app->recipeList->view()]
+    );
+});
+
+$app->get('/view-recipe/:user/:name', function ($user, $name) use ($app) {
+    $recipe = $app->recipeList->fetchByNameAndUser($name, new User($user));
+
+    $app->render(
+        'view-recipe.phtml',
+        ['recipe' => $recipe->view()]
+    );
+});
+
+$app->run();

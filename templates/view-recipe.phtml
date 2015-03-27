@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <div>
+      <div class="name"><?php echo htmlentities($recipe['name']); ?></div>
+      <div class="user"><?php echo htmlentities($recipe['user']['name']); ?></div>
+      <div class="rating"><?php echo htmlentities($recipe['stars']); ?> stars</div>
+      <div class="ingedients"></div>
+      <div class="method"><?php echo htmlentities($recipe['method']); ?></div>
+    </div>
+  </body>
+</html>

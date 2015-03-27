@@ -44,8 +44,7 @@ class WebContext implements Context, SnippetAcceptingContext
      */
     public function iFetchAndViewTheRecipeByUser($name, $username)
     {
-        $slug = strtolower($name . '-' . $username);
-        $slug = preg_replace('/[^a-z0-9]/', '-', $slug);
+        $slug = urlencode($username) . '/' . urlencode($name);
 
         $this->minkContext->visit("/view-recipe/$slug");
     }

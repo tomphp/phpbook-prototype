@@ -17,4 +17,5 @@ Feature: A visitor can view a recipe
       """
     And there's a recipe for "Mojito" by user "tom" with 5 stars, the measured ingredients and method added to the reciped list
     When I fetch and view the recipe "Mojito" by user "tom"
+    # @todo "Then I should have the ... "
     Then I should be viewing the name, user, rating, measured ingredients and method of the recipe

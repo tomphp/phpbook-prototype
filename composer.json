@@ -3,7 +3,8 @@
         "php": ">=5.5",
         "beberlei/assert": "~2.3",
         "behat/mink-extension": "~2.0",
-        "behat/mink-goutte-driver": "~1.1"
+        "behat/mink-goutte-driver": "~1.1",
+        "slim/slim": "~2.6"
     },
     "require-dev": {
         "behat/behat": "3.*",
