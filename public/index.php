@@ -12,14 +12,14 @@ $app->view()->setTemplatesDirectory(__DIR__ . '/../templates/');
 
 $app->recipeList = new RecipeList(new FileSystemRecipeRepository(__DIR__ . '/../test-fsdb'));
 
-$app->get('/list-recipes', function () use ($app) {
+$app->get('/recipes', function () use ($app) {
     $app->render(
         'list-recipes.phtml',
         ['recipes' => $app->recipeList->view()]
     );
 });
 
-$app->get('/view-recipe/:user/:name', function ($user, $name) use ($app) {
+$app->get('/recipes/:user/:name', function ($user, $name) use ($app) {
     $recipe = $app->recipeList->fetchByNameAndUser($name, new User($user));
 
     $app->render(

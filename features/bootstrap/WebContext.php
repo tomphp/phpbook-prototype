@@ -36,7 +36,7 @@ class WebContext implements Context, SnippetAcceptingContext
      */
     public function iViewTheRecipeList()
     {
-        $this->minkContext->visit('/list-recipes');
+        $this->minkContext->visit('/recipes');
     }
 
     /**
@@ -46,7 +46,7 @@ class WebContext implements Context, SnippetAcceptingContext
     {
         $slug = urlencode($username) . '/' . urlencode($name);
 
-        $this->minkContext->visit("/view-recipe/$slug");
+        $this->minkContext->visit("/recipes/$slug");
     }
 
     /**
