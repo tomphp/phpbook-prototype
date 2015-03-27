@@ -9,14 +9,17 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
+use CocktailRater\Domain\RecipeRepository;
 
 class RecipeListSpec extends ObjectBehavior
 {
     /** @var Recipe */
     private $recipe1;
 
-    function let()
+    function let(RecipeRepository $repository)
     {
+        $this->beConstructedWith($repository);
+
         $user        = new User('test user');
         $method      = new Method('test method');
         $ingredients = new MeasuredIngredientList([]);
@@ -27,9 +30,20 @@ class RecipeListSpec extends ObjectBehavior
 
         $this->recipe1 = $recipe1;
 
-        $this->add($recipe1);
-        $this->add($recipe2);
-        $this->add($recipe3);
+        $repository->findAll()->willReturn([$recipe1, $recipe2, $recipe3]);
+    }
+
+    public function it_adds_a_recipe_to_the_list($repository)
+    {
+        $user        = new User('test user');
+        $method      = new Method('test method');
+        $ingredients = new MeasuredIngredientList([]);
+
+        $recipe = new Recipe('test recipe 1', $user, new Stars(4), $ingredients, $method);
+
+        $repository->save($recipe)->shouldBeCalled();
+
+        $this->add($recipe);
     }
 
     public function it_sorts_the_recipes_by_rating_when_viewing()

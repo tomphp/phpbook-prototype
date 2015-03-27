@@ -15,6 +15,7 @@ use CocktailRater\Domain\RecipeList;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\Units;
 use CocktailRater\Domain\User;
+use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
 
 class CommonContext implements Context, SnippetAcceptingContext
 {
@@ -48,7 +49,10 @@ class CommonContext implements Context, SnippetAcceptingContext
      */
     public function __construct()
     {
-        $this->recipeList = new RecipeList();
+        $recipeRepository = new FileSystemRecipeRepository(__DIR__ . '/../../test-fsdb');
+        $recipeRepository->clear();
+
+        $this->recipeList = new RecipeList($recipeRepository);
     }
 
     /**
@@ -65,7 +69,7 @@ class CommonContext implements Context, SnippetAcceptingContext
      */
     public function aRecipeForByUserRatedWithStarsHasBeenAddedToTheRecipeList($recipeName, $username, $stars)
     {
-        $aRecipe = new Recipe(
+        $aRecipe = Recipe::withNoId(
             $recipeName,
             new User($username),
             new Stars($stars),
@@ -81,7 +85,7 @@ class CommonContext implements Context, SnippetAcceptingContext
      */
     public function aRecipeForRatedWithStarsHasBeenAddedToTheRecipeList($recipeName, $stars)
     {
-        $aRecipe = new Recipe(
+        $aRecipe = Recipe::withNoId(
             $recipeName,
             new User('dummy_user'),
             new Stars($stars),

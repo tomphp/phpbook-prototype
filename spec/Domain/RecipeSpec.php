@@ -9,6 +9,7 @@ use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
+use CocktailRater\Domain\RecipeId;
 
 class RecipeSpec extends ObjectBehavior
 {
@@ -19,13 +20,39 @@ class RecipeSpec extends ObjectBehavior
 
     function let()
     {
-        $this->beConstructedWith(
+        $this->beConstructedThrough('withNoId', [
             self::NAME,
             new User(self::USERNAME),
             new Stars(self::STARS),
             new MeasuredIngredientList([]),
             new Method(self::METHOD)
-        );
+        ]);
+    }
+
+    function it_has_a_null_id_if_not_been_stored()
+    {
+        $this->getId()->shouldReturn(null);
+    }
+
+    function it_can_have_its_it_set()
+    {
+        $this->setId(new RecipeId('test-id'));
+
+        $this->getId()->shouldBeLike(new RecipeId('test-id'));
+    }
+
+    function it_returns_data_for_storage()
+    {
+        $this->setId(new RecipeId('test-id'));
+
+        $this->getForStorage()->shouldReturn([
+            'id'                   => 'test-id',
+            'name'                 => self::NAME,
+            'user'                 => self::USERNAME,
+            'stars'                => self::STARS,
+            'measured_ingredients' => [],
+            'method'               => self::METHOD
+        ]);
     }
 
     function it_returns_view_data()
@@ -36,6 +63,36 @@ class RecipeSpec extends ObjectBehavior
             'stars'                => self::STARS,
             'measured_ingredients' => [],
             'method'               => self::METHOD
+        ]);
+    }
+
+    function it_can_be_created_from_a_storage_array()
+    {
+        $this->beConstructedThrough('fromStorageArray', [[
+            'id'                   => 'stored_id',
+            'name'                 => 'stored_name',
+            'user'                 => 'stored_username',
+            'stars'                => 2,
+            'measured_ingredients' => [[
+                'name'     => 'stored ingredient',
+                'quantity' => 25,
+                'units'    => 'ml'
+            ]],
+            'method'               => 'stored method'
+        ]]);
+
+        $this->getId()->shouldBeLike(new RecipeId('stored_id'));
+
+        $this->view()->shouldReturn([
+            'name'                 => 'stored_name',
+            'user'                 => ['name' => 'stored_username'],
+            'stars'                => 2,
+            'measured_ingredients' => [[
+                'name'     => 'stored ingredient',
+                'quantity' => 25,
+                'units'    => 'ml'
+            ]],
+            'method'               => 'stored method'
         ]);
     }
 
