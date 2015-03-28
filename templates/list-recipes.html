@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    {% if recipes|length < 1 %}
+      <p>There are no cocktail recipes available.</p>
+    {% else %}
+      <table id="recipes">
+        <tbody>
+          {% for recipe in recipes %}
+            <tr>
+              <td>{{ recipe['name'] }}</td>
+              <td>{{ recipe['user']['name'] }}</td>
+              <td>{{ recipe['stars'] }} stars</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      <table>
+    {% endif %}
+{% endblock %}
