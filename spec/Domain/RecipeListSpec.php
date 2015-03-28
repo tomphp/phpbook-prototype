@@ -2,14 +2,15 @@
 
 namespace spec\CocktailRater\Domain;
 
-use CocktailRater\Domain\Recipe;
-use CocktailRater\Domain\Stars;
-use CocktailRater\Domain\User;
-use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
+use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeRepository;
+use CocktailRater\Domain\Stars;
+use CocktailRater\Domain\User;
+use CocktailRater\Domain\Username;
+use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class RecipeListSpec extends ObjectBehavior
 {
@@ -20,7 +21,7 @@ class RecipeListSpec extends ObjectBehavior
     {
         $this->beConstructedWith($repository);
 
-        $user        = new User('test user');
+        $user        = new User(new Username('test user'));
         $method      = new Method('test method');
         $ingredients = new MeasuredIngredientList([]);
 
@@ -35,7 +36,7 @@ class RecipeListSpec extends ObjectBehavior
 
     public function it_adds_a_recipe_to_the_list($repository)
     {
-        $user        = new User('test user');
+        $user        = new User(new Username('test user'));
         $method      = new Method('test method');
         $ingredients = new MeasuredIngredientList([]);
 
@@ -77,7 +78,7 @@ class RecipeListSpec extends ObjectBehavior
 
     public function it_fetches_user_by_name()
     {
-        $this->fetchByNameAndUser('test recipe 1', new User('test user'))
+        $this->fetchByNameAndUser('test recipe 1', new User(new Username('test user')))
              ->shouldReturn($this->recipe1);
     }
 }

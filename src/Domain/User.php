@@ -2,24 +2,19 @@
 
 namespace CocktailRater\Domain;
 
-use Assert\Assertion;
-
 final class User
 {
-    /** @var string */
-    private $name;
+    /** @var Username */
+    private $username;
 
-    /** @param string $name */
-    public function __construct($name)
+    public function __construct(Username $username)
     {
-        Assertion::string($name);
-
-        $this->name = $name;
+        $this->username = $username;
     }
 
     /** @return array */
     public function view()
     {
-        return ['name' => $this->name];
+        return ['name' => $this->username->getValue()];
     }
 }

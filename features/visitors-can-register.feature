@@ -3,8 +3,8 @@ Feature: Visitors can register
   As a visitor
   I want to become a registered user
 
-#  Scenario: Register as a user
-#    Given I am a prospective user with username "tom", email "tom@example.com" and password "topsecret"
-#    When I register user "tom" the authentication service
-#    Then I should should be able to log in to the site as user "tom"
-# 
+  Scenario: Register as a user
+    Given I am a prospective user with username "tom", email "tom@example.com" and password "topsecret"
+    When I register with the authentication service
+    Then I should should be able to log in to the site as user "tom" with password "topsecret"
+

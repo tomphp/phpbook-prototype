@@ -57,7 +57,7 @@ final class Recipe
 
         $recipe = new self(
             $data['name'],
-            new User($data['user']),
+            new User(new Username($data['user'])),
             new Stars($data['stars']),
             new MeasuredIngredientList($ingredients),
             new Method($data['method'])

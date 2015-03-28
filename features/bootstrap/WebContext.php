@@ -3,13 +3,17 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\ScenarioScope;
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\MinkExtension\Context\MinkContext;
+use CocktailRater\Domain\Email;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
+use CocktailRater\Domain\Password;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeList;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\User;
+use CocktailRater\Domain\Username;
 use PHPUnit_Framework_Assert as Assert;
 
 class WebContext implements Context, SnippetAcceptingContext
@@ -20,6 +24,9 @@ class WebContext implements Context, SnippetAcceptingContext
     /** @var MinkContext */
     private $minkContext;
 
+    /** @var array */
+    private $prospectiveUser;
+
     /**
      * @BeforeScenario
      */
@@ -29,6 +36,18 @@ class WebContext implements Context, SnippetAcceptingContext
 
         $this->commonContext = $environment->getContext(CommonContext::class);
         $this->minkContext = $environment->getContext(MinkContext::class);
+    }
+
+    /**
+     * @Given I am a prospective user with username :username, email :email and password :password
+     */
+    public function iAmAProspectiveUserWithUsernameEmailAndPassword(Username $username, Email $email, Password $password)
+    {
+        $this->prospectiveUser = [
+            'username' => $username->getValue(),
+            'email'    => $email->getValue(),
+            'password' => $password->getValue()
+        ];
     }
 
     /**
@@ -44,7 +63,7 @@ class WebContext implements Context, SnippetAcceptingContext
      */
     public function iFetchAndViewTheRecipeByUser($name, $username)
     {
-        $slug = urlencode($username) . '/' . urlencode($name);
+        $slug = urlencode($username->getValue()) . '/' . urlencode($name);
 
         $this->minkContext->visit("/recipes/$slug");
     }
@@ -73,7 +92,10 @@ class WebContext implements Context, SnippetAcceptingContext
             $recipeUsername = $row->find('css', ':nth-child(2)')->getText();
             $recipeRating    = $row->find('css', ':nth-child(3)')->getText();
 
-            if ($name === $recipeName && $username === $recipeUsername && "$stars stars" === $recipeRating) {
+            if ($name === $recipeName
+                && $username->getValue() === $recipeUsername
+                && "{$stars->getValue()} stars" === $recipeRating
+            ) {
                 $found = true;
                 break;
             }
@@ -113,49 +135,49 @@ class WebContext implements Context, SnippetAcceptingContext
         $this->minkContext->assertElementContainsText('.method', $this->getMethod()->getValue());
     }
 
+    /**
+     * @When I register with the authentication service
+     */
+    public function iRegisterWithTheAuthenticationService()
+    {
+        $this->minkContext->visit('/register');
+
+        $this->minkContext->fillField('username', $this->prospectiveUser['username']);
+        $this->minkContext->fillField('email', $this->prospectiveUser['email']);
+        $this->minkContext->fillField('password', $this->prospectiveUser['password']);
+
+        $this->minkContext->pressButton('Register');
+
+        // @todo verify completion message?
+    }
+
+    /**
+     * @Then I should should be able to log in to the site as user :username with password :password
+     */
+    public function iShouldShouldBeAbleToLogInToTheSiteAsUserWithPassword(Username $username, Password $password)
+    {
+        $this->minkContext->visit('/login');
+
+        $this->minkContext->fillField('username', $this->prospectiveUser['username']);
+        $this->minkContext->fillField('password', $this->prospectiveUser['password']);
+
+        $this->minkContext->pressButton('Log In');
+
+        $this->minkContext->assertPageContainsText('Login Successful');
+    }
+
+    /** @return RecipeList */
+    public function getRecipeList()
+    {
+        return $this->commonContext->getRecipeList();
+    }
+
     private function assertIsSorted(array $list)
     {
         $sorted = $list;
         rsort($sorted);
 
         Assert::assertEquals($sorted, $list);
-    }
-
-//     /**
-//      * @Given I am a prospective user with username :username, email :email and password :password
-//      */
-//     public function iAmAProspectiveUserWithUsernameEmailAndPassword($username, $email, $password)
-//     {
-//         $this->user = new ProspectiveUser(
-//             new Username($username),
-//             new Email($email),
-//             new Password($password)
-//         );
-//     }
-//
-//     /**
-//      * @When I register user :username the authentication service
-//      */
-//     public function iRegisterUserTheAuthenticationService($username)
-//     {
-//         // @todo username required?
-//         $this->authenticationService($this->user);
-//     }
-//
-//     /**
-//      * @Then I should should be able to log in to the site as user :username
-//      */
-//     public function iShouldShouldBeAbleToLogInToTheSiteAsUser($username, $email)
-//     {
-//         $this->authenticationService->logIn(new Username($username), new Email($email));
-//
-//         Assert::assertTrue($this->authenticationService->isLoggedIn());
-//     }
-
-    /** @return RecipeList */
-    public function getRecipeList()
-    {
-        return $this->commonContext->getRecipeList();
     }
 
     /** @return MeasuredIngredientList */

@@ -5,16 +5,20 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use CocktailRater\Domain\Amount;
+use CocktailRater\Domain\AuthenticationService;
+use CocktailRater\Domain\Email;
 use CocktailRater\Domain\Ingredient;
 use CocktailRater\Domain\MeasuredIngredient;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
+use CocktailRater\Domain\Password;
 use CocktailRater\Domain\Quantity;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeList;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\Units;
 use CocktailRater\Domain\User;
+use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
 
 class CommonContext implements Context, SnippetAcceptingContext
@@ -40,6 +44,9 @@ class CommonContext implements Context, SnippetAcceptingContext
     /** @var array */
     private $results;
 
+    /** @var AuthenticationService */
+    private $authenticationService;
+
     /**
      * Initializes context.
      *
@@ -53,6 +60,8 @@ class CommonContext implements Context, SnippetAcceptingContext
         $recipeRepository->clear();
 
         $this->recipeList = new RecipeList($recipeRepository);
+
+        $this->authenticationService = new AuthenticationService();
     }
 
     /**
@@ -65,14 +74,14 @@ class CommonContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given a recipe for :recipeName by user :username rated with :stars stars has been added to the recipe list
+     * @Given a recipe for :recipeName by user :user rated with :stars stars has been added to the recipe list
      */
-    public function aRecipeForByUserRatedWithStarsHasBeenAddedToTheRecipeList($recipeName, $username, $stars)
+    public function aRecipeForByUserRatedWithStarsHasBeenAddedToTheRecipeList($recipeName, User $user, Stars $stars)
     {
         $aRecipe = Recipe::withNoId(
             $recipeName,
-            new User($username),
-            new Stars($stars),
+            $user,
+            $stars,
             new MeasuredIngredientList([]),
             new Method('')
         );
@@ -83,12 +92,12 @@ class CommonContext implements Context, SnippetAcceptingContext
     /**
      * @Given a recipe for :recipeName rated with :stars stars has been added to the recipe list
      */
-    public function aRecipeForRatedWithStarsHasBeenAddedToTheRecipeList($recipeName, $stars)
+    public function aRecipeForRatedWithStarsHasBeenAddedToTheRecipeList($recipeName, Stars $stars)
     {
         $aRecipe = Recipe::withNoId(
             $recipeName,
-            new User('dummy_user'),
-            new Stars($stars),
+            new User(new Username('dummy_user')),
+            $stars,
             new MeasuredIngredientList([]),
             new Method('')
         );
@@ -125,13 +134,13 @@ class CommonContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given there's a recipe for :name by user :username with :stars stars, the measured ingredients and method added to the reciped list
+     * @Given there's a recipe for :name by user :user with :stars stars, the measured ingredients and method added to the reciped list
      */
-    public function thereSARecipeForByUserWithStarsTheMeasuredIngredientsAndMethodAddedToTheRecipedList($name, $username, $stars)
+    public function thereSARecipeForByUserWithStarsTheMeasuredIngredientsAndMethodAddedToTheRecipedList($name, User $user, Stars $stars)
     {
-        $this->name = $name;
-        $this->user = new User($username);
-        $this->rating = new Stars($stars);
+        $this->name   = $name;
+        $this->user   = $user;
+        $this->rating = $stars;
 
         $aRecipe = new Recipe(
             $this->name,
@@ -142,6 +151,56 @@ class CommonContext implements Context, SnippetAcceptingContext
         );
 
         $this->recipeList->add($aRecipe);
+    }
+
+    /**
+     * @Transform :stars
+     *
+     * @return Stars
+     */
+    public function castToStars($stars)
+    {
+        return new Stars($stars);
+    }
+
+    /**
+     * @Transform :user
+     *
+     * @return User
+     */
+    public function castToUser($username)
+    {
+        return new User(new Username($username));
+    }
+
+    /**
+     * @Transform :username
+     *
+     * @return Username
+     */
+    public function castToUsername($username)
+    {
+        return new Username($username);
+    }
+
+    /**
+     * @Transform :email
+     *
+     * @return Email
+     */
+    public function castToEmail($email)
+    {
+        return new Email($email);
+    }
+
+    /**
+     * @Transform :password
+     *
+     * @return Password
+     */
+    public function castToPassword($password)
+    {
+        return new Password($password);
     }
 
     /** @return RecipeList */
@@ -178,5 +237,11 @@ class CommonContext implements Context, SnippetAcceptingContext
     public function getUser()
     {
         return $this->user;
+    }
+
+    /** @return AuthenticationService */
+    public function getAuthenticationService()
+    {
+        return $this->authenticationService;
     }
 }

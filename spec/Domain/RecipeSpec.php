@@ -5,6 +5,7 @@ namespace spec\CocktailRater\Domain;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use CocktailRater\Domain\User;
+use CocktailRater\Domain\Username;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\MeasuredIngredientList;
@@ -22,7 +23,7 @@ class RecipeSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('withNoId', [
             self::NAME,
-            new User(self::USERNAME),
+            new User(new Username(self::USERNAME)),
             new Stars(self::STARS),
             new MeasuredIngredientList([]),
             new Method(self::METHOD)
@@ -98,17 +99,17 @@ class RecipeSpec extends ObjectBehavior
 
     function it_matches_user_and_name()
     {
-        $this->shouldHaveNameAndUser(self::NAME, new User(self::USERNAME));
+        $this->shouldHaveNameAndUser(self::NAME, new User(new Username(self::USERNAME)));
     }
 
     function it_does_not_match_user_and_name_if_only_name_matches()
     {
-        $this->shouldNotHaveNameAndUser(self::NAME, new User('bad user'));
+        $this->shouldNotHaveNameAndUser(self::NAME, new User(new Username('bad user')));
     }
 
     function it_does_not_match_user_and_name_if_only_user_matches()
     {
-        $this->shouldNotHaveNameAndUser('bad name', new User(self::USERNAME));
+        $this->shouldNotHaveNameAndUser('bad name', new User(new Username(self::USERNAME)));
     }
 
     /*

@@ -3,12 +3,17 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\ScenarioScope;
+use CocktailRater\Domain\AuthenticationService;
+use CocktailRater\Domain\Email;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
+use CocktailRater\Domain\Password;
+use CocktailRater\Domain\ProspectiveUser;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeList;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\User;
+use CocktailRater\Domain\Username;
 use PHPUnit_Framework_Assert as Assert;
 
 class DomainContext implements Context, SnippetAcceptingContext
@@ -18,6 +23,9 @@ class DomainContext implements Context, SnippetAcceptingContext
 
     /** @var array */
     private $results;
+
+    /** @var ProspectiveUser */
+    private $prospectiveUser;
 
     /**
      * @BeforeScenario
@@ -29,6 +37,14 @@ class DomainContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given I am a prospective user with username :username, email :email and password :password
+     */
+    public function iAmAProspectiveUserWithUsernameEmailAndPassword(Username $username, Email $email, Password $password)
+    {
+        $this->prospectiveUser = new ProspectiveUser($username, $email, $password);
+    }
+
+    /**
      * @When I view the recipe list
      */
     public function iViewTheRecipeList()
@@ -37,11 +53,11 @@ class DomainContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @When I fetch and view the recipe :name by user :username
+     * @When I fetch and view the recipe :name by user :user
      */
-    public function iFetchAndViewTheRecipeByUser($name, $username)
+    public function iFetchAndViewTheRecipeByUser($name, User $user)
     {
-        $recipe = $this->getRecipeList()->fetchByNameAndUser($name, new User($username));
+        $recipe = $this->getRecipeList()->fetchByNameAndUser($name, $user);
 
         $this->results = $recipe->view();
     }
@@ -57,12 +73,12 @@ class DomainContext implements Context, SnippetAcceptingContext
     /**
      * @Then I should find :name by user :username with :stars stars in the results
      */
-    public function iShouldFindByUserWithStarsInTheResults($name, $username, $stars)
+    public function iShouldFindByUserWithStarsInTheResults($name, Username $username, Stars $stars)
     {
         $expected = [
             'name'                 => $name,
-            'user'                 => ['name' => $username],
-            'stars'                => $stars,
+            'user'                 => ['name' => $username->getValue()],
+            'stars'                => $stars->getValue(),
             // @todo This is dummy data, just check for the correct data
             'measured_ingredients' => [],
             'method'               => '',
@@ -96,49 +112,37 @@ class DomainContext implements Context, SnippetAcceptingContext
         Assert::assertEquals($this->getMethod()->getValue(), $this->results['method']);
     }
 
+    /**
+     * @When I register with the authentication service
+     */
+    public function iRegisterWithTheAuthenticationService()
+    {
+        // @todo username required?
+        $this->getAuthenticationService()->register($this->prospectiveUser);
+    }
+
+    /**
+     * @Then I should should be able to log in to the site as user :username with password :password
+     */
+    public function iShouldShouldBeAbleToLogInToTheSiteAsUserWithPassword(Username $username, Password $password)
+    {
+        $this->getAuthenticationService()->logIn($username, $password);
+
+        Assert::assertTrue($this->getAuthenticationService()->isLoggedIn());
+    }
+
+    /** @return RecipeList */
+    public function getRecipeList()
+    {
+        return $this->commonContext->getRecipeList();
+    }
+
     private function assertIsSorted(array $list)
     {
         $sorted = $list;
         rsort($sorted);
 
         Assert::assertEquals($sorted, $list);
-    }
-
-//     /**
-//      * @Given I am a prospective user with username :username, email :email and password :password
-//      */
-//     public function iAmAProspectiveUserWithUsernameEmailAndPassword($username, $email, $password)
-//     {
-//         $this->user = new ProspectiveUser(
-//             new Username($username),
-//             new Email($email),
-//             new Password($password)
-//         );
-//     }
-//
-//     /**
-//      * @When I register user :username the authentication service
-//      */
-//     public function iRegisterUserTheAuthenticationService($username)
-//     {
-//         // @todo username required?
-//         $this->authenticationService($this->user);
-//     }
-//
-//     /**
-//      * @Then I should should be able to log in to the site as user :username
-//      */
-//     public function iShouldShouldBeAbleToLogInToTheSiteAsUser($username, $email)
-//     {
-//         $this->authenticationService->logIn(new Username($username), new Email($email));
-//
-//         Assert::assertTrue($this->authenticationService->isLoggedIn());
-//     }
-
-    /** @return RecipeList */
-    public function getRecipeList()
-    {
-        return $this->commonContext->getRecipeList();
     }
 
     /** @return MeasuredIngredientList */
@@ -169,5 +173,11 @@ class DomainContext implements Context, SnippetAcceptingContext
     private function getUser()
     {
         return $this->commonContext->getUser();
+    }
+
+    /** @return AuthenticationService */
+    private function getAuthenticationService()
+    {
+        return $this->commonContext->getAuthenticationService();
     }
 }

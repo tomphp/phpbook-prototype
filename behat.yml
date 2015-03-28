@@ -13,7 +13,7 @@ default:
                 - CommonContext
                 - DomainContext
 
-        customer:
+        web:
             paths: [ %paths.base%/features ]
             contexts:
                 - CommonContext
