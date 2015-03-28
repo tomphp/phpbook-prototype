@@ -12,6 +12,8 @@ default:
             contexts:
                 - CommonContext
                 - DomainContext
+            filters:
+                tags: ~@todo
 
         web:
             paths: [ %paths.base%/features ]
@@ -19,3 +21,5 @@ default:
                 - CommonContext
                 - WebContext
                 - Behat\MinkExtension\Context\MinkContext
+            filters:
+                tags: ~@todo
