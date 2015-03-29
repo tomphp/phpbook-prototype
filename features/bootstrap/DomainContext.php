@@ -15,6 +15,8 @@ use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use PHPUnit_Framework_Assert as Assert;
+use CocktailRater\Domain\Exception\RegistrationException;
+use CocktailRater\Domain\Exception\UsernameTakenException;
 
 class DomainContext implements Context, SnippetAcceptingContext
 {
@@ -26,6 +28,9 @@ class DomainContext implements Context, SnippetAcceptingContext
 
     /** @var ProspectiveUser */
     private $prospectiveUser;
+
+    /** @var RegistrationException */
+    private $registrationException;
 
     /**
      * @BeforeScenario
@@ -117,8 +122,11 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function iRegisterWithTheAuthenticationService()
     {
-        // @todo username required?
-        $this->getAuthenticationService()->register($this->prospectiveUser);
+        try {
+            $this->getAuthenticationService()->register($this->prospectiveUser);
+        } catch (RegistrationException $error) {
+            $this->registrationException = $error;
+        }
     }
 
     /**
@@ -130,6 +138,15 @@ class DomainContext implements Context, SnippetAcceptingContext
 
         Assert::assertTrue($this->getAuthenticationService()->isLoggedIn());
     }
+
+    /**
+     * @Then I should should get a :errorName error
+     */
+    public function iShouldShouldGetAError($errorName)
+    {
+        Assert::assertInstanceOf(UsernameTakenException::class, $this->registrationException);
+    }
+
 
     /** @return RecipeList */
     public function getRecipeList()

@@ -13,7 +13,7 @@ default:
                 - CommonContext
                 - DomainContext
             filters:
-                tags: ~@todo
+                tags: "~@todo&&~@no-domain"
 
         web:
             paths: [ %paths.base%/features ]
@@ -22,7 +22,7 @@ default:
                 - WebContext
                 - Behat\MinkExtension\Context\MinkContext
             filters:
-                tags: ~@todo
+                tags: "~@todo&&~@no-web"
 
         api:
             paths: [ %paths.base%/features ]

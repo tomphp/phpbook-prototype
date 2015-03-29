@@ -20,6 +20,8 @@ use CocktailRater\Domain\Units;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
+use CocktailRater\Domain\ProspectiveUser;
+use Behat\Behat\Tester\Exception\PendingException;
 
 class CommonContext implements Context, SnippetAcceptingContext
 {
@@ -151,6 +153,19 @@ class CommonContext implements Context, SnippetAcceptingContext
         );
 
         $this->recipeList->add($aRecipe);
+    }
+
+
+    /**
+     * @Given there is a user registered with the authenication service with username :username and email :email
+     */
+    public function thereIsAUserRegisteredWithTheAuthenicationServiceWithUsernameAndEmail(Username $username, Email $email)
+    {
+        $this->authenticationService->register(new ProspectiveUser(
+            $username,
+            $email,
+            new Password('dummy_password')
+        ));
     }
 
     /**
