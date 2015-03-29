@@ -15,6 +15,7 @@ use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use PHPUnit_Framework_Assert as Assert;
+use Behat\Mink\Element\NodeElement;
 
 class WebContext implements Context, SnippetAcceptingContext
 {
@@ -63,9 +64,14 @@ class WebContext implements Context, SnippetAcceptingContext
      */
     public function iFetchAndViewTheRecipeByUser($name, $username)
     {
-        $slug = urlencode($username->getValue()) . '/' . urlencode($name);
+        $this->minkContext->visit('/recipes');
 
-        $this->minkContext->visit("/recipes/$slug");
+        $row = $this->findRecipeRow([
+            'name'     => $name,
+            'username' => $username->getValue()
+        ]);
+
+        $row->clickLink($name);
     }
 
     /**
@@ -83,25 +89,13 @@ class WebContext implements Context, SnippetAcceptingContext
     {
         $page = $this->minkContext->getSession()->getPage();
 
-        $rows = $page->findAll('css', '#recipes tbody tr');
+        $row = $this->findRecipeRow([
+            'name'     => $name,
+            'username' => $username->getValue(),
+            'stars'    => $stars->getValue()
+        ]);
 
-        $found = false;
-
-        foreach ($rows as $row) {
-            $recipeName     = $row->find('css', ':nth-child(1)')->getText();
-            $recipeUsername = $row->find('css', ':nth-child(2)')->getText();
-            $recipeRating    = $row->find('css', ':nth-child(3)')->getText();
-
-            if ($name === $recipeName
-                && $username->getValue() === $recipeUsername
-                && "{$stars->getValue()} stars" === $recipeRating
-            ) {
-                $found = true;
-                break;
-            }
-        }
-
-        Assert::assertTrue($found);
+        Assert::assertNotNull($row);
     }
 
     /**
@@ -170,6 +164,56 @@ class WebContext implements Context, SnippetAcceptingContext
     public function getRecipeList()
     {
         return $this->commonContext->getRecipeList();
+    }
+
+    /**
+     * @param string[] $search
+     *
+     * @return NodeElement|null
+     */
+    private function findRecipeRow(array $search)
+    {
+
+        $page = $this->minkContext->getSession()->getPage();
+        $rows = $page->findAll('css', '#recipes tbody tr');
+
+        $found = false;
+
+        foreach ($rows as $row) {
+            if ($this->recipeRowMatches($search, $row)) {
+                $found = true;
+                break;
+            }
+        }
+
+        return $found ? $row : null;
+    }
+
+    /**
+     * @param string[] $search
+     *
+     * @return boolean
+     */
+    private function recipeRowMatches(array $search, NodeElement $row)
+    {
+        $columnMap = [
+            'name'     => 1,
+            'username' => 2,
+            'stars'    => 3
+        ];
+
+        $found = true;
+
+        foreach ($search as $name => $value) {
+            $actual = $row->find('css', ":nth-child({$columnMap[$name]})")
+                          ->getText();
+
+            if ($value != $actual) {
+                $found = false;
+            }
+        }
+
+        return $found;
     }
 
     private function assertIsSorted(array $list)

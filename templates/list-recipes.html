@@ -8,7 +8,7 @@
         <tbody>
           {% for recipe in recipes %}
             <tr>
-              <td>{{ recipe['name'] }}</td>
+              <td><a href="/recipes/{{ recipe['user']['name']|url_encode }}/{{ recipe['name']|url_encode }}">{{ recipe['name'] }}</a></td>
               <td>{{ recipe['user']['name'] }}</td>
               <td>{{ recipe['stars'] }} stars</td>
             </tr>
