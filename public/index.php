@@ -10,6 +10,10 @@ use Slim\Views\Twig;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+if (file_exists($_SERVER["DOCUMENT_ROOT"] . $_SERVER["REQUEST_URI"])) {
+    return false;
+}
+
 $app = new Slim([
     'view'           => new Twig(),
     'templates.path' => __DIR__ . '/../templates/'
@@ -100,5 +104,9 @@ $app->get('/api/v1/recipes/:id', function ($id) use ($app) {
     ]);
 });
 // END API
+
+$app->get('/react', function () use ($app) {
+    $app->render('react.html');
+});
 
 $app->run();

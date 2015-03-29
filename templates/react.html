@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block header %}
+  <script src="/components/react/react.min.js"></script>
+  <script src="/components/react/JSXTransformer.js"></script>
+  <script src="/components/jquery/dist/jquery.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  <div id="content"></div>
+  <script type="text/jsx" src="/js/app.js"></script>
+{% endblock %}

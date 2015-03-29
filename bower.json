@@ -1,0 +1,7 @@
+{
+  "name": "cocktail-rater",
+  "dependencies": {
+    "react": "~0.13.1",
+    "jquery": "~2.1.3"
+  }
+}
