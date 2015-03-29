@@ -1,5 +1,6 @@
 <?php
 
+use CocktailRater\Domain\RecipeId;
 use CocktailRater\Domain\RecipeList;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
@@ -43,5 +44,61 @@ $app->get('/login', function () use ($app) {
 $app->post('/login', function () use ($app) {
     echo "Login Successful";
 });
+
+
+// START API
+$app->get('/api/v1/recipes', function () use ($app) {
+    $app->response->headers->set('content-type', 'application/hal+json');
+
+    $url = $app->request->getUrl() . $app->request->getPath();
+
+    $recipes = array_map(function (array $recipe) use ($url) {
+        return [
+            '_links' => [
+                'self' => ['href' => $url . '/' . $recipe['id']]
+            ],
+            'name'      => $recipe['name'],
+            'stars'     => $recipe['stars'],
+            '_embedded' => [
+                'user' => [
+                    'name' => $recipe['user']['name']
+                ]
+            ]
+        ];
+    }, $app->recipeList->view());
+
+    echo json_encode([
+        '_links' => [
+            'self' => ['href' => $app->request->getUrl() . $app->request->getPath()]
+        ],
+        'count' => 0,
+        '_embedded' => [
+            'recipes' => $recipes
+        ],
+    ]);
+});
+
+$app->get('/api/v1/recipes/:id', function ($id) use ($app) {
+    $app->response->headers->set('content-type', 'application/hal+json');
+
+    $url = $app->request->getUrl() . $app->request->getPath();
+
+    $recipe = $app->recipeList->fetchById(new RecipeId($id))->view();
+
+    echo json_encode([
+        '_links' => [
+            'self' => ['href' => $url]
+        ],
+        'name'      => $recipe['name'],
+        'stars'     => $recipe['stars'],
+        'method'    => $recipe['method'],
+        '_embedded' => [
+            'user' => [
+                'name' => $recipe['user']['name']
+            ]
+        ]
+    ]);
+});
+// END API
 
 $app->run();

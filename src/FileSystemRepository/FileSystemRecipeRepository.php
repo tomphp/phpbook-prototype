@@ -39,7 +39,11 @@ final class FileSystemRecipeRepository implements RecipeRepository
         file_put_contents($this->tablePath, serialize($recipes));
     }
 
-    /** @return Recipe[] */
+    public function findById(RecipeId $id)
+    {
+        return Recipe::fromStorageArray($this->getRows()[$id->getValue()]);
+    }
+
     public function findAll()
     {
         return array_map(function ($row) {

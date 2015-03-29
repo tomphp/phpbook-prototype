@@ -11,6 +11,7 @@ use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use CocktailRater\Domain\RecipeId;
 
 class RecipeListSpec extends ObjectBehavior
 {
@@ -76,9 +77,16 @@ class RecipeListSpec extends ObjectBehavior
         $this->view()->shouldReturn($results);
     }
 
-    public function it_fetches_user_by_name()
+    public function it_fetches_by_user_and_name()
     {
         $this->fetchByNameAndUser('test recipe 1', new User(new Username('test user')))
              ->shouldReturn($this->recipe1);
+    }
+
+    public function it_fetches_by_id($repository)
+    {
+        $repository->findById(new RecipeId('test_id'))->willReturn($this->recipe1);
+
+        $this->fetchById(new RecipeId('test_id'))->shouldReturn($this->recipe1);
     }
 }

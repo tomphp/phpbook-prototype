@@ -16,6 +16,7 @@ Feature: A visitor can view a list of recipes
     Then I should find "Mojito" by user "tom" with 5 stars in the results
     And I should find "Daquiri" by user "clare" with 4 stars in the results
 
+  @no-api
   Scenario: View a list of several recipes
     Given a recipe for "Daquiri" rated with 4 stars has been added to the recipe list
     And a recipe for "Pina Colada" rated with 2 stars has been added to the recipe list

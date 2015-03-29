@@ -3,6 +3,8 @@ Feature: Visitors can register
   As a visitor
   I want to become a registered user
 
+  # @todo Register over api
+  @no-api
   Scenario: Register as a user
     Given I am a prospective user with username "tom", email "tom@example.com" and password "topsecret"
     When I register with the authentication service

@@ -85,6 +85,7 @@ class RecipeSpec extends ObjectBehavior
         $this->getId()->shouldBeLike(new RecipeId('stored_id'));
 
         $this->view()->shouldReturn([
+            'id'                   => 'stored_id',
             'name'                 => 'stored_name',
             'user'                 => ['name' => 'stored_username'],
             'stars'                => 2,

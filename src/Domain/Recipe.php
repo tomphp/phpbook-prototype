@@ -118,13 +118,16 @@ final class Recipe
     /** @return array */
     public function view()
     {
-        return [
-            'name'                 => $this->name,
-            'user'                 => $this->user->view(),
-            'stars'                => $this->rating->getValue(),
-            'measured_ingredients' => $this->ingredients->view(),
-            'method'               => $this->method->getValue()
-        ];
+       return array_merge(
+           $this->id ? ['id' => $this->id->getValue()] : [],
+           [
+               'name'                 => $this->name,
+               'user'                 => $this->user->view(),
+               'stars'                => $this->rating->getValue(),
+               'measured_ingredients' => $this->ingredients->view(),
+               'method'               => $this->method->getValue()
+           ]
+       );
     }
 
     /** @return array */

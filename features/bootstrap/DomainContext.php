@@ -75,16 +75,16 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function iShouldFindByUserWithStarsInTheResults($name, Username $username, Stars $stars)
     {
-        $expected = [
-            'name'                 => $name,
-            'user'                 => ['name' => $username->getValue()],
-            'stars'                => $stars->getValue(),
-            // @todo This is dummy data, just check for the correct data
-            'measured_ingredients' => [],
-            'method'               => '',
-        ];
+        $recipe = array_filter(
+            $this->results,
+            function ($recipe) use ($name, $username, $stars) {
+                return $name === $recipe['name']
+                    && $username->getValue() === $recipe['user']['name']
+                    && $stars->getValue() === $recipe['stars'];
+            }
+        );
 
-        Assert::assertContains($expected, $this->results);
+        Assert::assertCount(1, $recipe);
     }
 
     /**

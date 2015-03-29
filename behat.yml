@@ -23,3 +23,12 @@ default:
                 - Behat\MinkExtension\Context\MinkContext
             filters:
                 tags: ~@todo
+
+        api:
+            paths: [ %paths.base%/features ]
+            contexts:
+                - CommonContext
+                - ApiContext:
+                    url: 'http://localhost:1080/api/v1/'
+            filters:
+                tags: "~@todo&&~@no-api"

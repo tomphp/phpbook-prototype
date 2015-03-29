@@ -22,10 +22,22 @@ final class RecipeList
     }
 
     /**
+     * @return Recipe
+     *
+     * @todo throw
+     * @throws RecipeNotFoundException
+     */
+    public function fetchById(RecipeId $id)
+    {
+        return $this->repository->findById($id);
+    }
+
+    /**
      * @param string $name
      *
      * @return Recipe
      *
+     * @todo throw
      * @throws RecipeNotFoundException
      */
     public function fetchByNameAndUser($name, User $user)

@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8e52881d1e0b3cf5329420cb81e50636",
+    "hash": "036f9152f2b286ab5b14641563ef9dfa",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1611,12 +1611,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/phpspec.git",
-                "reference": "f52daa3373bdf58711c81f19a68d8a5e4c9b3f1f"
+                "reference": "abd6e9bac2e5e8217836cc2727cac632679914be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/phpspec/zipball/f52daa3373bdf58711c81f19a68d8a5e4c9b3f1f",
-                "reference": "f52daa3373bdf58711c81f19a68d8a5e4c9b3f1f",
+                "url": "https://api.github.com/repos/phpspec/phpspec/zipball/abd6e9bac2e5e8217836cc2727cac632679914be",
+                "reference": "abd6e9bac2e5e8217836cc2727cac632679914be",
                 "shasum": ""
             },
             "require": {
@@ -1681,7 +1681,7 @@
                 "testing",
                 "tests"
             ],
-            "time": "2015-03-28 01:00:07"
+            "time": "2015-03-29 10:20:06"
         },
         {
             "name": "phpspec/prophecy",
