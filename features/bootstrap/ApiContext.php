@@ -5,6 +5,7 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\MinkExtension\Context\MinkContext;
+use Behat\Mink\Element\NodeElement;
 use CocktailRater\Domain\Email;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
@@ -15,8 +16,7 @@ use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use PHPUnit_Framework_Assert as Assert;
-use Behat\Mink\Element\NodeElement;
-use GuzzleHttp\Client;
+use TomPHP\HalClient\Client;
 
 class ApiContext implements Context, SnippetAcceptingContext
 {
@@ -65,32 +65,20 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iViewTheRecipeList()
     {
-        $this->getFromApi($this->url . 'recipes');
-
+        $this->response = Client::create()->get($this->url . 'recipes');
     }
-
 
     /**
      * @When I fetch and view the recipe :name by user :username
      */
     public function iFetchAndViewTheRecipeByUser($name, $username)
     {
-        $this->getFromApi($this->url . 'recipes');
+        $recipes = Client::create()->get($this->url . 'recipes')->recipes;
 
-        $found = false;
-
-        foreach ($this->response['_embedded']['recipes'] as $recipe) {
-            if ($name === $recipe['name']
-                && $username->getValue() === $recipe['_embedded']['user']['name']
-            ) {
-                $found = true;
-                break;
-            }
-        }
-
-        Assert::assertTrue($found);
-
-        $this->getFromApi($recipe['_links']['self']['href']);
+        $this->response = $recipes->findMatching([
+            'name' => $name,
+            'user' => ['name' => $username->getValue()]
+        ])[0]->self->get();
     }
 
     /**
@@ -98,9 +86,9 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iShouldFindThatTheResultsAreEmpty()
     {
-        Assert::assertEquals(0, $this->response['count']);
+        Assert::assertEquals(0, $this->response->count->getValue());
 
-        Assert::assertEmpty($this->response['_embedded']['recipes']);
+        Assert::assertEmpty($this->response->recipes);
     }
 
     /**
@@ -108,37 +96,13 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iShouldFindByUserWithStarsInTheResults($name, $username, $stars)
     {
-        $found = false;
+        $recipes = $this->response->recipes->findMatching([
+            'name'  => $name,
+            'user'  => ['name' => $username->getValue()],
+            'stars' => $stars->getValue()
+        ]);
 
-        foreach ($this->response['_embedded']['recipes'] as $recipe) {
-            if ($name === $recipe['name']
-                && $username->getValue() === $recipe['_embedded']['user']['name']
-                && $stars->getValue() === $recipe['stars']
-            ) {
-                $found = true;
-                break;
-            }
-        }
-
-        Assert::assertTrue($found);
-    }
-
-    /**
-     * @Then I should find the results have the highest rated recipes at the top of recipe list
-     */
-    public function iShouldFindTheResultsHaveTheHighestRatedRecipesAtTheTopOfRecipeList()
-    {
-        $page = $this->minkContext->getSession()->getPage();
-
-        $rows = $page->findAll('css', '#recipes tbody tr');
-
-        $ratings = [];
-
-        foreach ($rows as $row) {
-            $ratings[] = $row->find('css', ':nth-child(3)')->getText();
-        }
-
-        $this->assertIsSorted($ratings);
+        Assert::assertCount(1, $recipes);
     }
 
     /**
@@ -146,17 +110,18 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iShouldBeViewingTheNameUserRatingMeasuredIngredientsAndMethodOfTheRecipe()
     {
-        Assert::assertEquals($this->getName(), $this->response['name']);
-        Assert::assertEquals($this->getUser()->view()['name'], $this->response['_embedded']['user']['name']);
-        Assert::assertEquals($this->getRating()->getValue(), $this->response['stars']);
+        Assert::assertEquals($this->getName(), $this->response->name->getValue());
+        Assert::assertEquals($this->getUser()->view()['name'], $this->response->user->name->getValue());
+        Assert::assertEquals($this->getRating()->getValue(), $this->response->stars->getValue());
         // @todo assertTableMatches()
         //$this->minkContext->assertElementContainsText('.ingredient', $this->getMeasuredIngredientList()->view());
-        Assert::assertEquals($this->getMethod()->getValue(), $this->response['method']);
+        Assert::assertEquals($this->getMethod()->getValue(), $this->response->method->getValue());
     }
 
     /**
      * @When I register with the authentication service
      */
+    /*
     public function iRegisterWithTheAuthenticationService()
     {
         $this->minkContext->visit('/register');
@@ -169,10 +134,12 @@ class ApiContext implements Context, SnippetAcceptingContext
 
         // @todo verify completion message?
     }
+     */
 
     /**
      * @Then I should should be able to log in to the site as user :username with password :password
      */
+    /*
     public function iShouldShouldBeAbleToLogInToTheSiteAsUserWithPassword(Username $username, Password $password)
     {
         $this->minkContext->visit('/login');
@@ -184,32 +151,12 @@ class ApiContext implements Context, SnippetAcceptingContext
 
         $this->minkContext->assertPageContainsText('Login Successful');
     }
+     */
 
     /** @return RecipeList */
     public function getRecipeList()
     {
         return $this->commonContext->getRecipeList();
-    }
-
-    /**
-     * @param string $url
-     *
-     * @return array
-     */
-    private function getFromApi($url)
-    {
-        $client = new Client();
-        $response = $client->get($url);
-
-        Assert::assertEquals(
-            'application/hal+json',
-            $response->getHeader('content-type'),
-            'Incorrect content type'
-        );
-
-        $this->response = $response->json();
-
-        Assert::assertEquals($url, $this->response['_links']['self']['href']);
     }
 
     /** @return MeasuredIngredientList */

@@ -6,11 +6,12 @@
         "behat/mink-goutte-driver": "~1.1",
         "slim/slim": "~2.6",
         "slim/views": "0.1.*",
-        "twig/twig": "~1.18"
+        "twig/twig": "~1.18",
+        "tomphp/hal-client": "dev-master"
     },
     "require-dev": {
         "behat/behat": "3.*",
-        "phpunit/phpunit": "4.2.*",
+        "phpunit/phpunit": "~4.5",
         "phpspec/phpspec": "2.*@dev",
         "guzzlehttp/guzzle": "~5.0"
     },
