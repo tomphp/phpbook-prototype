@@ -71,7 +71,7 @@ class ApiContext implements Context, SnippetAcceptingContext
     /**
      * @When I fetch and view the recipe :name by user :username
      */
-    public function iFetchAndViewTheRecipeByUser($name, $username)
+    public function iFetchAndViewTheRecipeByUser($name, Username $username)
     {
         $recipes = Client::create()->get($this->url . 'recipes')->recipes;
 
@@ -94,7 +94,7 @@ class ApiContext implements Context, SnippetAcceptingContext
     /**
      * @Then I should find :name by user :username with :stars stars in the results
      */
-    public function iShouldFindByUserWithStarsInTheResults($name, $username, $stars)
+    public function iShouldFindByUserWithStarsInTheResults($name, Username $username, Stars $stars)
     {
         $recipes = $this->response->recipes->findMatching([
             'name'  => $name,
