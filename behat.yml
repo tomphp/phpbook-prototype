@@ -29,6 +29,6 @@ default:
             contexts:
                 - CommonContext
                 - ApiContext:
-                    url: 'http://localhost:1080/api/v1/'
+                    url: 'http://localhost:1080/api/v1'
             filters:
                 tags: "~@todo&&~@no-api"

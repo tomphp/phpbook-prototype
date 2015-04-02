@@ -65,7 +65,7 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iViewTheRecipeList()
     {
-        $this->response = Client::create()->get($this->url . 'recipes');
+        $this->response = Client::create()->get($this->url)->recipes->get();
     }
 
     /**
@@ -73,7 +73,7 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iFetchAndViewTheRecipeByUser($name, Username $username)
     {
-        $recipes = Client::create()->get($this->url . 'recipes')->recipes;
+        $recipes = Client::create()->get($this->url)->recipes->get()->recipes;
 
         $this->response = $recipes->findMatching([
             'name' => $name,

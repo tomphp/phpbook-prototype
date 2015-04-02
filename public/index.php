@@ -51,6 +51,19 @@ $app->post('/login', function () use ($app) {
 
 
 // START API
+$app->get('/api/v1', function () use ($app) {
+    $app->response->headers->set('content-type', 'application/hal+json');
+
+    $url = $app->request->getUrl() . $app->request->getPath();
+
+    echo json_encode([
+        '_links' => [
+            'self' => ['href' => $url],
+            'recipes' => ['href' => $url . '/recipes']
+        ],
+    ]);
+});
+
 $app->get('/api/v1/recipes', function () use ($app) {
     $app->response->headers->set('content-type', 'application/hal+json');
 
