@@ -17,6 +17,9 @@ use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use PHPUnit_Framework_Assert as Assert;
 use TomPHP\HalClient\Client;
+use TomPHP\HalClient\Resource\Resource;
+use TomPHP\HalClient\Resource\NodeCollection;
+use TomPHP\HalClient\Resource\Node;
 
 class ApiContext implements Context, SnippetAcceptingContext
 {
@@ -65,7 +68,7 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iViewTheRecipeList()
     {
-        $this->response = Client::create()->get($this->url)->recipes->get();
+        $this->response = $this->getFromApi('recipes');
     }
 
     /**
@@ -73,12 +76,13 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iFetchAndViewTheRecipeByUser($name, Username $username)
     {
-        $recipes = Client::create()->get($this->url)->recipes->get()->recipes;
+        $recipes = $this->getFromApi('recipes')->getResource('recipes');
 
         $this->response = $recipes->findMatching([
             'name' => $name,
-            'user' => ['name' => $username->getValue()]
-        ])[0]->self->get();
+            'user' => ['name' => $username->getValue()],
+            //['resource', 'user' => ['name' => $username->getValue()]],
+        ])[0]->getLink('self')->get();
     }
 
     /**
@@ -98,7 +102,8 @@ class ApiContext implements Context, SnippetAcceptingContext
     {
         $recipes = $this->response->recipes->findMatching([
             'name'  => $name,
-            'user'  => ['name' => $username->getValue()],
+            'user' => ['name' => $username->getValue()],
+            //['resource', 'user' => ['name' => $username->getValue()]],
             'stars' => $stars->getValue()
         ]);
 
@@ -153,8 +158,15 @@ class ApiContext implements Context, SnippetAcceptingContext
     }
      */
 
+    /** @return Node */
+    private function getFromApi($collectionName)
+    {
+        return Client::create()->get($this->url)
+                               ->getLink($collectionName)->get();
+    }
+
     /** @return RecipeList */
-    public function getRecipeList()
+    private function getRecipeList()
     {
         return $this->commonContext->getRecipeList();
     }
