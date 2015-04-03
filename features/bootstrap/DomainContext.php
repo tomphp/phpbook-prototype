@@ -147,20 +147,18 @@ class DomainContext implements Context, SnippetAcceptingContext
     {
         Assert::assertInstanceOf(UsernameTakenException::class, $this->registrationException);
     }
-
-
-    /** @return RecipeList */
-    public function getRecipeList()
-    {
-        return $this->commonContext->getRecipeList();
-    }
-
     private function assertIsSorted(array $list)
     {
         $sorted = $list;
         rsort($sorted);
 
         Assert::assertEquals($sorted, $list);
+    }
+
+    /** @return RecipeList */
+    private function getRecipeList()
+    {
+        return $this->commonContext->getRecipeList();
     }
 
     /** @return MeasuredIngredientList */

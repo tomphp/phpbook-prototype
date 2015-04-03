@@ -160,8 +160,16 @@ class WebContext implements Context, SnippetAcceptingContext
         $this->minkContext->assertPageContainsText('Login Successful');
     }
 
+    /**
+     * @Then I should should get a :errorName error
+     */
+    public function iShouldShouldGetAError($errorName)
+    {
+        $this->minkContext->assertPageContainsText('This username has already been taken');
+    }
+
     /** @return RecipeList */
-    public function getRecipeList()
+    private function getRecipeList()
     {
         return $this->commonContext->getRecipeList();
     }
