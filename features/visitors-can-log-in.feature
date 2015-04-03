@@ -10,6 +10,12 @@ Feature: Visitors can log in and become users
     Then I should be logged in
 
   @todo
+  Scenario: Attempting to log in with unknown password
+    Given there is a user account with username "tom" and password "topsecret"
+    When I login with user "unknown" and password "topsecret"
+    Then I should not be logged in
+
+  @todo
   Scenario: Attempting to log in with incorrect password
     Given there is a user account with username "tom" and password "topsecret"
     When I login with user "tom" and password "badpassword"

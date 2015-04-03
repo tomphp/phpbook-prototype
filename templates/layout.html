@@ -15,6 +15,10 @@
     
     <h1>Cocktail Rater</h1>
 
+    {% if message %}
+      <div>{{ message }}</div>
+    {% endif %}
+
     {% block content %}{% endblock %}
   </body>
 </html>
