@@ -76,16 +76,11 @@ $app->get('/api/v1/recipes', function () use ($app) {
             ],
             'name'      => $recipe['name'],
             'stars'     => $recipe['stars'],
-            'user' => [
-                'name' => $recipe['user']['name']
-            ],
-            /*
             '_embedded' => [
                 'user' => [
                     'name' => $recipe['user']['name']
                 ]
             ]
-             */
         ];
     }, $app->recipeList->view());
 

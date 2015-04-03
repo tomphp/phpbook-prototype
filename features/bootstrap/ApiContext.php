@@ -80,8 +80,7 @@ class ApiContext implements Context, SnippetAcceptingContext
 
         $this->response = $recipes->findMatching([
             'name' => $name,
-            'user' => ['name' => $username->getValue()],
-            //['resource', 'user' => ['name' => $username->getValue()]],
+            ['resource', 'user', ['name' => $username->getValue()]],
         ])[0]->getLink('self')->get();
     }
 
@@ -92,7 +91,7 @@ class ApiContext implements Context, SnippetAcceptingContext
     {
         Assert::assertEquals(0, $this->response->count->getValue());
 
-        Assert::assertEmpty($this->response->recipes);
+        Assert::assertEmpty($this->response->getResource('recipes'));
     }
 
     /**
@@ -100,10 +99,9 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iShouldFindByUserWithStarsInTheResults($name, Username $username, Stars $stars)
     {
-        $recipes = $this->response->recipes->findMatching([
+        $recipes = $this->response->getResource('recipes')->findMatching([
             'name'  => $name,
-            'user' => ['name' => $username->getValue()],
-            //['resource', 'user' => ['name' => $username->getValue()]],
+            ['resource', 'user', ['name' => $username->getValue()]],
             'stars' => $stars->getValue()
         ]);
 
@@ -116,7 +114,7 @@ class ApiContext implements Context, SnippetAcceptingContext
     public function iShouldBeViewingTheNameUserRatingMeasuredIngredientsAndMethodOfTheRecipe()
     {
         Assert::assertEquals($this->getName(), $this->response->name->getValue());
-        Assert::assertEquals($this->getUser()->view()['name'], $this->response->user->name->getValue());
+        Assert::assertEquals($this->getUser()->view()['name'], $this->response->getResource('user')->name->getValue());
         Assert::assertEquals($this->getRating()->getValue(), $this->response->stars->getValue());
         // @todo assertTableMatches()
         //$this->minkContext->assertElementContainsText('.ingredient', $this->getMeasuredIngredientList()->view());
