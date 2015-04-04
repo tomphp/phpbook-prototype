@@ -5,13 +5,16 @@ namespace spec\CocktailRater\Domain;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
 use CocktailRater\Domain\Recipe;
+use CocktailRater\Domain\RecipeId;
 use CocktailRater\Domain\RecipeRepository;
+use CocktailRater\Domain\Specification\RecipeNameSpecification;
+use CocktailRater\Domain\Specification\UserSpecification;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use CocktailRater\Domain\RecipeId;
+use CocktailRater\Domain\Specification\AndSpecification;
 
 class RecipeListSpec extends ObjectBehavior
 {
@@ -26,6 +29,7 @@ class RecipeListSpec extends ObjectBehavior
         $method      = new Method('test method');
         $ingredients = new MeasuredIngredientList([]);
 
+        // @todo Can an abstraction be used???
         $recipe1 = new Recipe('test recipe 1', $user, new Stars(4), $ingredients, $method);
         $recipe2 = new Recipe('test recipe 2', $user, new Stars(3), $ingredients, $method);
         $recipe3 = new Recipe('test recipe 3', $user, new Stars(5), $ingredients, $method);
@@ -77,10 +81,18 @@ class RecipeListSpec extends ObjectBehavior
         $this->view()->shouldReturn($results);
     }
 
-    public function it_fetches_by_user_and_name()
+    public function it_fetches_by_user_and_name($repository)
     {
-        $this->fetchByNameAndUser('test recipe 1', new User(new Username('test user')))
-             ->shouldReturn($this->recipe1);
+        $user = new User(new Username('test user'));
+
+        $specification = new AndSpecification(
+            new RecipeNameSpecification('test recipe'),
+            new UserSpecification($user)
+        );
+
+        $repository->findOneBySpecification($specification)->willReturn($this->recipe1);
+
+        $this->fetchByNameAndUser('test recipe', $user)->shouldReturn($this->recipe1);
     }
 
     public function it_fetches_by_id($repository)

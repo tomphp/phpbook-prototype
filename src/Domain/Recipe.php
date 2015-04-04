@@ -4,7 +4,7 @@ namespace CocktailRater\Domain;
 
 use Assert\Assertion;
 
-final class Recipe
+final class Recipe implements NamedRecipe
 {
     /** @var RecipeId|null */
     private $id;
