@@ -5,6 +5,7 @@ namespace CocktailRater\FileSystemRepository;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeId;
 use CocktailRater\Domain\RecipeRepository;
+use CocktailRater\Domain\Specification\Specification;
 
 final class FileSystemRecipeRepository implements RecipeRepository
 {
@@ -49,6 +50,10 @@ final class FileSystemRecipeRepository implements RecipeRepository
         return array_map(function ($row) {
             return Recipe::fromStorageArray($row);
         }, $this->getRows());
+    }
+
+    public function findOneBySpecification(Specification $specification)
+    {
     }
 
     /** @return array */

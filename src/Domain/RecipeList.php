@@ -2,6 +2,10 @@
 
 namespace CocktailRater\Domain;
 
+use CocktailRater\Domain\Specification\RecipeNameSpecification;
+use CocktailRater\Domain\Specification\UserSpecification;
+use CocktailRater\Domain\Specification\AndSpecification;
+
 final class RecipeList
 {
     /** @var RecipeRepository */
@@ -40,17 +44,12 @@ final class RecipeList
      */
     public function fetchByNameAndUser(RecipeName $name, User $user)
     {
-        $theRecipe = null;
+        $specification = new AndSpecification(
+            new RecipeNameSpecification('test recipe'),
+            new UserSpecification($user)
+        );
 
-        foreach ($this->repository->findAll() as $recipe) {
-            if ($recipe->hasNameAndUser($name, $user)) {
-                $theRecipe = $recipe;
-
-                break;
-            }
-        }
-
-        return $theRecipe;
+        return $this->repository->findOneBySpecification($specification);
     }
 
     /** @return array */
