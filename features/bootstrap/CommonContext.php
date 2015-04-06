@@ -17,12 +17,13 @@ use CocktailRater\Domain\ProspectiveUser;
 use CocktailRater\Domain\Quantity;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeList;
+use CocktailRater\Domain\RecipeName;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\Units;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
-use CocktailRater\Domain\RecipeName;
+use CocktailRater\FileSystemRepository\FileSystemUserRepository;
 
 class CommonContext implements Context, SnippetAcceptingContext
 {
@@ -62,9 +63,12 @@ class CommonContext implements Context, SnippetAcceptingContext
         $recipeRepository = new FileSystemRecipeRepository(__DIR__ . '/../../test-fsdb');
         $recipeRepository->clear();
 
+        $userRepository = new FileSystemUserRepository(__DIR__ . '/../../test-fsdb');
+        $userRepository->clear();
+
         $this->recipeList = new RecipeList($recipeRepository);
 
-        $this->authenticationService = new AuthenticationService();
+        $this->authenticationService = new AuthenticationService($userRepository);
     }
 
     /**

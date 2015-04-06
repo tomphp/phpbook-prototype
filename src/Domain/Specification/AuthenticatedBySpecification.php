@@ -2,6 +2,9 @@
 
 namespace CocktailRater\Domain\Specification;
 
-final class AuthenticatedBySpecification
+final class AuthenticatedBySpecification implements Specification
 {
+    public function isSatisfiedBy($candidate)
+    {
+    }
 }
