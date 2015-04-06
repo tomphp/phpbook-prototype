@@ -4,6 +4,10 @@ namespace CocktailRater\Domain;
 
 interface NamedRecipe
 {
-    /** @reture string */
-    public function getName();
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasNameMatching($name);
 }

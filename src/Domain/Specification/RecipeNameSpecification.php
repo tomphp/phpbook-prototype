@@ -21,6 +21,6 @@ final class RecipeNameSpecification implements Specification
     {
         Assertion::isInstanceOf($candidate, NamedRecipe::class);
 
-        return $candidate->getName() == $this->name;
+        return $candidate->hasNameMatching($this->name);
     }
 }

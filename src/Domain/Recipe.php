@@ -4,7 +4,7 @@ namespace CocktailRater\Domain;
 
 use Assert\Assertion;
 
-final class Recipe implements NamedRecipe
+final class Recipe implements NamedRecipe, UserOwned
 {
     /** @var RecipeId|null */
     private $id;
@@ -87,6 +87,16 @@ final class Recipe implements NamedRecipe
     public function setId(RecipeId $id)
     {
         $this->id = $id;
+    }
+
+    public function hasNameMatching($name)
+    {
+        return $name === $this->name;
+    }
+
+    public function isOwnedByUser(User $user)
+    {
+        return $this->user == $user;
     }
 
     /*

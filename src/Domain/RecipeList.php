@@ -45,7 +45,7 @@ final class RecipeList
     public function fetchByNameAndUser(RecipeName $name, User $user)
     {
         $specification = new AndSpecification(
-            new RecipeNameSpecification('test recipe'),
+            new RecipeNameSpecification($name),
             new UserSpecification($user)
         );
 

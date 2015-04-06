@@ -2,18 +2,20 @@
 
 namespace tests\CocktailRater\Domain;
 
-use PHPUnit_Framework_TestCase;
-use CocktailRater\Domain\RecipeRepository;
-use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
-use CocktailRater\Domain\Recipe;
-use CocktailRater\Domain\User;
-use CocktailRater\Domain\Username;
-use CocktailRater\Domain\Stars;
+use CocktailRater\Domain\Exception\EntityNotFoundException;
+use CocktailRater\Domain\Exception\TooManyMatchingEntitiesException;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
+use CocktailRater\Domain\Recipe;
+use CocktailRater\Domain\RecipeRepository;
 use CocktailRater\Domain\Specification\AndSpecification;
 use CocktailRater\Domain\Specification\RecipeNameSpecification;
 use CocktailRater\Domain\Specification\UserSpecification;
+use CocktailRater\Domain\Stars;
+use CocktailRater\Domain\User;
+use CocktailRater\Domain\Username;
+use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
+use PHPUnit_Framework_TestCase;
 
 class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
 {
@@ -26,9 +28,12 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
 
         $this->repository->clear();
 
+        $user1 = new User(new Username('user1'));
+        $user2 = new User(new Username('user2'));
+
         $this->repository->save(Recipe::withNoId(
             'recipe 1',
-            new User(new Username('user1')),
+            $user1,
             new Stars(3),
             new MeasuredIngredientList([]),
             new Method('method 1')
@@ -36,17 +41,53 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
 
         $this->repository->save(Recipe::withNoId(
             'recipe 2',
-            new User(new Username('user2')),
+            $user2,
             new Stars(4),
             new MeasuredIngredientList([]),
             new Method('method 2')
+        ));
+
+        $this->repository->save(Recipe::withNoId(
+            'recipe 3',
+            $user1,
+            new Stars(5),
+            new MeasuredIngredientList([]),
+            new Method('method 3')
         ));
     }
 
     /** @test */
     function it_fetches_all_recipes()
     {
-        $this->assertCount(2, $this->repository->findAll());
+        $this->assertCount(3, $this->repository->findAll());
+    }
+
+    /** @test */
+    function it_throws_if_findOneBySpecification_finds_none()
+    {
+        $this->setExpectedException(
+            EntityNotFoundException::class,
+            // @todo describe specification
+            'No recipes matching specification were found.'
+        );
+
+        $this->repository->findOneBySpecification(
+            new RecipeNameSpecification('recipe which doesn\'t exist')
+        );
+    }
+
+    /** @test */
+    function it_throws_if_findOneBySpecification_finds_many()
+    {
+        $this->setExpectedException(
+            TooManyMatchingEntitiesException::class,
+            // @todo describe specification
+            'More than one matching recipe was found.'
+        );
+
+        $this->repository->findOneBySpecification(
+            new UserSpecification(new User(new Username('user1')))
+        );
     }
 
     /** @test */
@@ -64,6 +105,6 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
             }
         ))[0];
 
-        $this->assertEquals($expected, $this->repository->findBySpecification($specification));
+        $this->assertEquals($expected, $this->repository->findOneBySpecification($specification));
     }
 }

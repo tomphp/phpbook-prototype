@@ -99,6 +99,16 @@ class RecipeSpec extends ObjectBehavior
         ]);
     }
 
+    function it_is_not_owned_by_a_different_user()
+    {
+        $this->shouldNotBeOwnedByUser(new User(new Username('different_user')));
+    }
+
+    function it_is_owned_by_the_user()
+    {
+        $this->shouldBeOwnedByUser(new User(new Username(self::USERNAME)));
+    }
+
     function it_matches_user_and_name()
     {
         $this->shouldHaveNameAndUser(new RecipeName(self::NAME), new User(new Username(self::USERNAME)));
@@ -112,6 +122,12 @@ class RecipeSpec extends ObjectBehavior
     function it_does_not_match_user_and_name_if_only_user_matches()
     {
         $this->shouldNotHaveNameAndUser(new RecipeName('bad name'), new User(new Username(self::USERNAME)));
+    }
+
+    function it_checks_if_name_matches()
+    {
+        $this->shouldHaveNameMatching(self::NAME);
+        $this->shouldNotHaveNameMatching('a different name');
     }
 
     /*

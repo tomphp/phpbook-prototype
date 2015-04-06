@@ -3,6 +3,7 @@
 namespace CocktailRater\Domain;
 
 use CocktailRater\Domain\Specification\Specification;
+use CocktailRater\Domain\Exception\EntityNotFoundException;
 
 interface RecipeRepository
 {
@@ -18,6 +19,10 @@ interface RecipeRepository
     /** @return Recipe[] */
     public function findAll();
 
-    /** @return Recipe */
+    /**
+     * @return Recipe
+     *
+     * @throws EntityNotFoundException
+     */
     public function findOneBySpecification(Specification $specification);
 }

@@ -6,6 +6,8 @@ use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeId;
 use CocktailRater\Domain\RecipeRepository;
 use CocktailRater\Domain\Specification\Specification;
+use CocktailRater\Domain\Exception\EntityNotFoundException;
+use CocktailRater\Domain\Exception\TooManyMatchingEntitiesException;
 
 final class FileSystemRecipeRepository implements RecipeRepository
 {
@@ -54,6 +56,28 @@ final class FileSystemRecipeRepository implements RecipeRepository
 
     public function findOneBySpecification(Specification $specification)
     {
+        $recipes = array_values(array_filter(
+            $this->findAll(),
+            function (Recipe $recipe) use ($specification) {
+                return $specification->isSatisfiedBy($recipe);
+            }
+        ));
+
+        if (empty($recipes)) {
+            // @todo exception factory
+            throw new EntityNotFoundException(
+                'No recipes matching specification were found.'
+            );
+        }
+
+        if (count($recipes) > 1) {
+            // @todo exception factory
+            throw new TooManyMatchingEntitiesException(
+                'More than one matching recipe was found.'
+            );
+        }
+
+        return $recipes[0];
     }
 
     /** @return array */
