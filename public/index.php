@@ -2,6 +2,7 @@
 
 use CocktailRater\Domain\RecipeId;
 use CocktailRater\Domain\RecipeList;
+use CocktailRater\Domain\RecipeName;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
@@ -29,7 +30,10 @@ $app->get('/recipes', function () use ($app) {
 });
 
 $app->get('/recipes/:user/:name', function ($user, $name) use ($app) {
-    $recipe = $app->recipeList->fetchByNameAndUser($name, new User(new Username($user)));
+    $recipe = $app->recipeList->fetchByNameAndUser(
+        new RecipeName($name),
+        new User(new Username($user))
+    );
 
     $app->render(
         'view-recipe.html',

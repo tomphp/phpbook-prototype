@@ -2,15 +2,16 @@
 
 namespace spec\CocktailRater\Domain;
 
-use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-use CocktailRater\Domain\User;
-use CocktailRater\Domain\Username;
-use CocktailRater\Domain\Stars;
-use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
+use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeId;
+use CocktailRater\Domain\RecipeName;
+use CocktailRater\Domain\Stars;
+use CocktailRater\Domain\User;
+use CocktailRater\Domain\Username;
+use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class RecipeSpec extends ObjectBehavior
 {
@@ -22,7 +23,7 @@ class RecipeSpec extends ObjectBehavior
     function let()
     {
         $this->beConstructedThrough('withNoId', [
-            self::NAME,
+            new RecipeName(self::NAME),
             new User(new Username(self::USERNAME)),
             new Stars(self::STARS),
             new MeasuredIngredientList([]),
@@ -100,17 +101,17 @@ class RecipeSpec extends ObjectBehavior
 
     function it_matches_user_and_name()
     {
-        $this->shouldHaveNameAndUser(self::NAME, new User(new Username(self::USERNAME)));
+        $this->shouldHaveNameAndUser(new RecipeName(self::NAME), new User(new Username(self::USERNAME)));
     }
 
     function it_does_not_match_user_and_name_if_only_name_matches()
     {
-        $this->shouldNotHaveNameAndUser(self::NAME, new User(new Username('bad user')));
+        $this->shouldNotHaveNameAndUser(new RecipeName(self::NAME), new User(new Username('bad user')));
     }
 
     function it_does_not_match_user_and_name_if_only_user_matches()
     {
-        $this->shouldNotHaveNameAndUser('bad name', new User(new Username(self::USERNAME)));
+        $this->shouldNotHaveNameAndUser(new RecipeName('bad name'), new User(new Username(self::USERNAME)));
     }
 
     /*

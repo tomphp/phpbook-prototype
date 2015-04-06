@@ -2,6 +2,7 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use CocktailRater\Domain\Amount;
@@ -12,6 +13,7 @@ use CocktailRater\Domain\MeasuredIngredient;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
 use CocktailRater\Domain\Password;
+use CocktailRater\Domain\ProspectiveUser;
 use CocktailRater\Domain\Quantity;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeList;
@@ -20,8 +22,7 @@ use CocktailRater\Domain\Units;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
-use CocktailRater\Domain\ProspectiveUser;
-use Behat\Behat\Tester\Exception\PendingException;
+use CocktailRater\Domain\RecipeName;
 
 class CommonContext implements Context, SnippetAcceptingContext
 {
@@ -34,8 +35,8 @@ class CommonContext implements Context, SnippetAcceptingContext
     /** @var Method */
     private $method;
 
-    /** @var string */
-    private $name;
+    /** @var RecipeName */
+    private $recipeName;
 
     /** @var Stars */
     private $rating;
@@ -136,16 +137,16 @@ class CommonContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given there's a recipe for :name by user :user with :stars stars, the measured ingredients and method added to the reciped list
+     * @Given there's a recipe for :recipeName by user :user with :stars stars, the measured ingredients and method added to the reciped list
      */
-    public function thereSARecipeForByUserWithStarsTheMeasuredIngredientsAndMethodAddedToTheRecipedList($name, User $user, Stars $stars)
+    public function thereSARecipeForByUserWithStarsTheMeasuredIngredientsAndMethodAddedToTheRecipedList(RecipeName $recipeName, User $user, Stars $stars)
     {
-        $this->name   = $name;
+        $this->recipeName   = $recipeName;
         $this->user   = $user;
         $this->rating = $stars;
 
         $aRecipe = new Recipe(
-            $this->name,
+            $this->recipeName,
             $this->user,
             $this->rating,
             $this->measuredIngredientList,
@@ -176,6 +177,16 @@ class CommonContext implements Context, SnippetAcceptingContext
     public function castToStars($stars)
     {
         return new Stars($stars);
+    }
+
+    /**
+     * @Transform :recipeName
+     *
+     * @return RecipeName
+     */
+    public function castToRecipeName($recipeName)
+    {
+        return new RecipeName($recipeName);
     }
 
     /**
@@ -236,10 +247,10 @@ class CommonContext implements Context, SnippetAcceptingContext
         return $this->method;
     }
 
-    /** @return string */
-    public function getName()
+    /** @return RecipeName */
+    public function getRecipeName()
     {
-        return $this->name;
+        return $this->recipeName;
     }
 
     /** @return Stars */

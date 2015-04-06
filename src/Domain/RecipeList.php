@@ -33,14 +33,12 @@ final class RecipeList
     }
 
     /**
-     * @param string $name
-     *
      * @return Recipe
      *
      * @todo throw
      * @throws RecipeNotFoundException
      */
-    public function fetchByNameAndUser($name, User $user)
+    public function fetchByNameAndUser(RecipeName $name, User $user)
     {
         $theRecipe = null;
 

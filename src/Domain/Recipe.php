@@ -2,14 +2,12 @@
 
 namespace CocktailRater\Domain;
 
-use Assert\Assertion;
-
 final class Recipe
 {
     /** @var RecipeId|null */
     private $id;
 
-    /** @var string */
+    /** @var RecipeName */
     private $name;
 
     /** @var Stars */
@@ -24,13 +22,9 @@ final class Recipe
     /** @var string */
     private $method;
 
-    /**
-     * @param string $name
-     *
-     * @return Recipe
-     */
+    /** @return Recipe */
     public static function withNoId(
-        $name,
+        RecipeName $name,
         User $user,
         Stars $rating,
         MeasuredIngredientList $ingredients,
@@ -56,7 +50,7 @@ final class Recipe
         }, $data['measured_ingredients']);
 
         $recipe = new self(
-            $data['name'],
+            new RecipeName($data['name']),
             new User(new Username($data['user'])),
             new Stars($data['stars']),
             new MeasuredIngredientList($ingredients),
@@ -68,16 +62,13 @@ final class Recipe
         return $recipe;
     }
 
-    /** @param string $name */
     public function __construct(
-        $name,
+        RecipeName $name,
         User $user,
         Stars $rating,
         MeasuredIngredientList $ingredients,
         Method $method
     ) {
-        Assertion::string($name);
-
         $this->name        = $name;
         $this->user        = $user;
         $this->rating      = $rating;
@@ -103,7 +94,7 @@ final class Recipe
     }
      */
 
-    public function hasNameAndUser($name, User $user)
+    public function hasNameAndUser(RecipeName $name, User $user)
     {
         return $name == $this->name && $user == $this->user;
     }
@@ -121,7 +112,7 @@ final class Recipe
        return array_merge(
            $this->id ? ['id' => $this->id->getValue()] : [],
            [
-               'name'                 => $this->name,
+               'name'                 => $this->name->getValue(),
                'user'                 => $this->user->view(),
                'stars'                => $this->rating->getValue(),
                'measured_ingredients' => $this->ingredients->view(),
@@ -135,7 +126,7 @@ final class Recipe
     {
         return [
             'id'                   => $this->id->getValue(),
-            'name'                 => $this->name,
+            'name'                 => $this->name->getValue(),
             'user'                 => $this->user->view()['name'],
             'stars'                => $this->rating->getValue(),
             'measured_ingredients' => $this->ingredients->view(),

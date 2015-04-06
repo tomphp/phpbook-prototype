@@ -5,13 +5,14 @@ namespace spec\CocktailRater\Domain;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
 use CocktailRater\Domain\Recipe;
+use CocktailRater\Domain\RecipeId;
+use CocktailRater\Domain\RecipeName;
 use CocktailRater\Domain\RecipeRepository;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use CocktailRater\Domain\RecipeId;
 
 class RecipeListSpec extends ObjectBehavior
 {
@@ -26,9 +27,9 @@ class RecipeListSpec extends ObjectBehavior
         $method      = new Method('test method');
         $ingredients = new MeasuredIngredientList([]);
 
-        $recipe1 = new Recipe('test recipe 1', $user, new Stars(4), $ingredients, $method);
-        $recipe2 = new Recipe('test recipe 2', $user, new Stars(3), $ingredients, $method);
-        $recipe3 = new Recipe('test recipe 3', $user, new Stars(5), $ingredients, $method);
+        $recipe1 = new Recipe(new RecipeName('test recipe 1'), $user, new Stars(4), $ingredients, $method);
+        $recipe2 = new Recipe(new RecipeName('test recipe 2'), $user, new Stars(3), $ingredients, $method);
+        $recipe3 = new Recipe(new RecipeName('test recipe 3'), $user, new Stars(5), $ingredients, $method);
 
         $this->recipe1 = $recipe1;
 
@@ -41,7 +42,7 @@ class RecipeListSpec extends ObjectBehavior
         $method      = new Method('test method');
         $ingredients = new MeasuredIngredientList([]);
 
-        $recipe = new Recipe('test recipe 1', $user, new Stars(4), $ingredients, $method);
+        $recipe = new Recipe(new RecipeName('test recipe 1'), $user, new Stars(4), $ingredients, $method);
 
         $repository->save($recipe)->shouldBeCalled();
 
@@ -79,7 +80,7 @@ class RecipeListSpec extends ObjectBehavior
 
     public function it_fetches_by_user_and_name()
     {
-        $this->fetchByNameAndUser('test recipe 1', new User(new Username('test user')))
+        $this->fetchByNameAndUser(new RecipeName('test recipe 1'), new User(new Username('test user')))
              ->shouldReturn($this->recipe1);
     }
 

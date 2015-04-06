@@ -113,7 +113,7 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
     public function iShouldBeViewingTheNameUserRatingMeasuredIngredientsAndMethodOfTheRecipe()
     {
-        Assert::assertEquals($this->getName(), $this->response->name->getValue());
+        Assert::assertEquals($this->getRecipeName()->getValue(), $this->response->name->getValue());
         Assert::assertEquals($this->getUser()->view()['name'], $this->response->getResource('user')->name->getValue());
         Assert::assertEquals($this->getRating()->getValue(), $this->response->stars->getValue());
         // @todo assertTableMatches()
@@ -181,10 +181,10 @@ class ApiContext implements Context, SnippetAcceptingContext
         return $this->commonContext->getMethod();
     }
 
-    /** @return string */
-    private function getName()
+    /** @return RecipeName */
+    private function getRecipeName()
     {
-        return $this->commonContext->getName();
+        return $this->commonContext->getRecipeName();
     }
 
     /** @return Stars */

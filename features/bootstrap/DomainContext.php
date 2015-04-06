@@ -5,18 +5,19 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use CocktailRater\Domain\AuthenticationService;
 use CocktailRater\Domain\Email;
+use CocktailRater\Domain\Exception\RegistrationException;
+use CocktailRater\Domain\Exception\UsernameTakenException;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
 use CocktailRater\Domain\Password;
 use CocktailRater\Domain\ProspectiveUser;
 use CocktailRater\Domain\Recipe;
 use CocktailRater\Domain\RecipeList;
+use CocktailRater\Domain\RecipeName;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use PHPUnit_Framework_Assert as Assert;
-use CocktailRater\Domain\Exception\RegistrationException;
-use CocktailRater\Domain\Exception\UsernameTakenException;
 
 class DomainContext implements Context, SnippetAcceptingContext
 {
@@ -58,11 +59,11 @@ class DomainContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @When I fetch and view the recipe :name by user :user
+     * @When I fetch and view the recipe :recipeName by user :user
      */
-    public function iFetchAndViewTheRecipeByUser($name, User $user)
+    public function iFetchAndViewTheRecipeByUser(RecipeName $recipeName, User $user)
     {
-        $recipe = $this->getRecipeList()->fetchByNameAndUser($name, $user);
+        $recipe = $this->getRecipeList()->fetchByNameAndUser($recipeName, $user);
 
         $this->results = $recipe->view();
     }
@@ -110,7 +111,7 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function iShouldBeViewingTheNameUserRatingMeasuredIngredientsAndMethodOfTheRecipe()
     {
-        Assert::assertEquals($this->getName(), $this->results['name']);
+        Assert::assertEquals($this->getRecipeName()->getValue(), $this->results['name']);
         Assert::assertEquals($this->getUser()->view(), $this->results['user']);
         Assert::assertEquals($this->getRating()->getValue(), $this->results['stars']);
         Assert::assertEquals($this->getMeasuredIngredientList()->view(), $this->results['measured_ingredients']);
@@ -174,10 +175,10 @@ class DomainContext implements Context, SnippetAcceptingContext
         return $this->commonContext->getMethod();
     }
 
-    /** @return string */
-    private function getName()
+    /** @return RecipeName */
+    private function getRecipeName()
     {
-        return $this->commonContext->getName();
+        return $this->commonContext->getRecipeName();
     }
 
     /** @return Stars */
