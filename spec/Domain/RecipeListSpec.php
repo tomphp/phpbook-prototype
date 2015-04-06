@@ -87,13 +87,14 @@ class RecipeListSpec extends ObjectBehavior
         $user = new User(new Username('test user'));
 
         $specification = new AndSpecification(
-            new RecipeNameSpecification('test recipe'),
+            new RecipeNameSpecification(new RecipeName('test recipe')),
             new UserSpecification($user)
         );
 
         $repository->findOneBySpecification($specification)->willReturn($this->recipe1);
 
-        $this->fetchByNameAndUser('test recipe', $user)->shouldReturn($this->recipe1);
+        $this->fetchByNameAndUser(new RecipeName('test recipe'), $user)
+             ->shouldReturn($this->recipe1);
     }
 
     public function it_fetches_by_id($repository)

@@ -4,14 +4,14 @@ namespace CocktailRater\Domain\Specification;
 
 use Assert\Assertion;
 use CocktailRater\Domain\NamedRecipe;
+use CocktailRater\Domain\RecipeName;
 
 final class RecipeNameSpecification implements Specification
 {
-    /** @var string */
+    /** @var RecipeName */
     private $name;
 
-    /** @param string $name */
-    public function __construct($name)
+    public function __construct(RecipeName $name)
     {
         $this->name = $name;
     }

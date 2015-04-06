@@ -126,8 +126,8 @@ class RecipeSpec extends ObjectBehavior
 
     function it_checks_if_name_matches()
     {
-        $this->shouldHaveNameMatching(self::NAME);
-        $this->shouldNotHaveNameMatching('a different name');
+        $this->shouldHaveNameMatching(new RecipeName(self::NAME));
+        $this->shouldNotHaveNameMatching(new RecipeName('a different name'));
     }
 
     /*

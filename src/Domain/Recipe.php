@@ -91,7 +91,7 @@ final class Recipe implements NamedRecipe, UserOwned
 
     public function hasNameMatching($name)
     {
-        return $name === $this->name;
+        return $name == $this->name;
     }
 
     public function isOwnedByUser(User $user)
