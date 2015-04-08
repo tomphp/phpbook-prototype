@@ -1,6 +1,7 @@
 <?php
 
 use CocktailRater\Domain\AuthenticationService;
+use CocktailRater\Domain\ProspectiveUser;
 use CocktailRater\Domain\RecipeId;
 use CocktailRater\Domain\RecipeList;
 use CocktailRater\Domain\RecipeName;
@@ -9,7 +10,7 @@ use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
 use Slim\Slim;
 use Slim\Views\Twig;
-use CocktailRater\Domain\ProspectiveUser;
+use CocktailRater\FileSystemRepository\FileSystemUserRepository;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -24,8 +25,9 @@ $app = new Slim([
     'templates.path' => __DIR__ . '/../templates/'
 ]);
 
-$app->recipeList = new RecipeList(new FileSystemRecipeRepository(__DIR__ . '/../test-fsdb'));
-$app->authService = new AuthenticationService();
+$dbDir = __DIR__ . '/../test-fsdb';
+$app->recipeList = new RecipeList(new FileSystemRecipeRepository($dbDir));
+$app->authService = new AuthenticationService(new FileSystemUserRepository($dbDir));
 
 $app->hook('slim.before', function () use($app) {
     // @todo really use SESSION?

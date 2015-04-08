@@ -7,6 +7,7 @@ use CocktailRater\Domain\Exception\TooManyMatchingEntitiesException;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
 use CocktailRater\Domain\Recipe;
+use CocktailRater\Domain\RecipeName;
 use CocktailRater\Domain\RecipeRepository;
 use CocktailRater\Domain\Specification\AndSpecification;
 use CocktailRater\Domain\Specification\RecipeNameSpecification;
@@ -32,7 +33,7 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
         $user2 = new User(new Username('user2'));
 
         $this->repository->save(Recipe::withNoId(
-            'recipe 1',
+            new RecipeName('recipe 1'),
             $user1,
             new Stars(3),
             new MeasuredIngredientList([]),
@@ -40,7 +41,7 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
         ));
 
         $this->repository->save(Recipe::withNoId(
-            'recipe 2',
+            new RecipeName('recipe 2'),
             $user2,
             new Stars(4),
             new MeasuredIngredientList([]),
@@ -48,7 +49,7 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
         ));
 
         $this->repository->save(Recipe::withNoId(
-            'recipe 3',
+            new RecipeName('recipe 3'),
             $user1,
             new Stars(5),
             new MeasuredIngredientList([]),
@@ -72,7 +73,7 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
         );
 
         $this->repository->findOneBySpecification(
-            new RecipeNameSpecification('recipe which doesn\'t exist')
+            new RecipeNameSpecification(new RecipeName('recipe which doesn\'t exist'))
         );
     }
 
@@ -94,7 +95,7 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
     function it_finds_one_by_name_and_user()
     {
         $specification = new AndSpecification(
-            new RecipeNameSpecification('recipe 1'),
+            new RecipeNameSpecification(new RecipeName('recipe 1')),
             new UserSpecification(new User(new Username('user1')))
         );
 
