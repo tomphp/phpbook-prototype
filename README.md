@@ -17,5 +17,6 @@ To test:
 
 ```
 $ vendor/bin/phpspec run
+$ phpunit
 $ vendor/bin/behat
 ```
