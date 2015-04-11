@@ -11,82 +11,42 @@ use CocktailRater\Domain\Exception\TooManyMatchingEntitiesException;
 
 final class FileSystemRecipeRepository implements RecipeRepository
 {
-    /** @var string */
-    private $tablePath;
+    /** @var FileSystemRepository */
+    private $repository;
 
     /** @param string $dbPath */
     public function __construct($dbPath)
     {
-        $this->tablePath = $dbPath . DIRECTORY_SEPARATOR . 'recipes.db';
+        $this->repository = new FileSystemRepository(
+            $dbPath,
+            'recipe',
+            Recipe::class,
+            RecipeId::class
+        );
     }
 
     public function clear()
     {
-        file_put_contents($this->tablePath, serialize([]));
+        $this->repository->clear();
     }
 
     public function save(Recipe $recipe)
     {
-        $recipes = $this->getRows();
-
-        $id = $recipe->getId();
-
-        if (!$id) {
-            $id = new RecipeId(uniqid('recipe_'));
-
-            $recipe->setId($id);
-        }
-
-        $recipes[$id->getValue()] = $recipe->getForStorage();
-
-        file_put_contents($this->tablePath, serialize($recipes));
+        $this->repository->save($recipe);
     }
 
     public function findById(RecipeId $id)
     {
-        return Recipe::fromStorageArray($this->getRows()[$id->getValue()]);
+        return $this->repository->findById($id);
     }
 
     public function findAll()
     {
-        return array_map(function ($row) {
-            return Recipe::fromStorageArray($row);
-        }, $this->getRows());
+        return $this->repository->findAll();
     }
 
     public function findOneBySpecification(Specification $specification)
     {
-        $recipes = array_values(array_filter(
-            $this->findAll(),
-            function (Recipe $recipe) use ($specification) {
-                return $specification->isSatisfiedBy($recipe);
-            }
-        ));
-
-        if (empty($recipes)) {
-            // @todo exception factory
-            throw new EntityNotFoundException(
-                'No recipes matching specification were found.'
-            );
-        }
-
-        if (count($recipes) > 1) {
-            // @todo exception factory
-            throw new TooManyMatchingEntitiesException(
-                'More than one matching recipe was found.'
-            );
-        }
-
-        return $recipes[0];
-    }
-
-    /** @return array */
-    private function getRows()
-    {
-        if (!file_exists($this->tablePath)) {
-            return [];
-        }
-
-        return unserialize(file_get_contents($this->tablePath));
+        return $this->repository->findOneBySpecification($specification);
     }
 }
