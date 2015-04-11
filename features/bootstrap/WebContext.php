@@ -146,7 +146,7 @@ class WebContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Then I should should be able to log in to the site as user :username with password :password
+     * @Then I should be able to log in to the site as user :username with password :password
      */
     public function iShouldShouldBeAbleToLogInToTheSiteAsUserWithPassword(Username $username, Password $password)
     {
@@ -161,7 +161,7 @@ class WebContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Then I should should get a :errorName error
+     * @Then I should get a :errorName error
      */
     public function iShouldShouldGetAError($errorName)
     {

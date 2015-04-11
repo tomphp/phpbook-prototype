@@ -31,6 +31,16 @@ final class ProspectiveUser
         $this->username = $username;
     }
 
+    /**
+     * @todo RegisteredUser?
+     *
+     * @return User
+     */
+    public function convertToUser()
+    {
+        return new User($this->username);
+    }
+
     /** @return Username */
     public function getUsername()
     {

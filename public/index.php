@@ -2,15 +2,18 @@
 
 use CocktailRater\Domain\AuthenticationService;
 use CocktailRater\Domain\ProspectiveUser;
+use CocktailRater\Domain\Exception\AuthenticationException;
+use CocktailRater\Domain\Exception\UsernameTakenException;
+use CocktailRater\Domain\Password;
 use CocktailRater\Domain\RecipeId;
 use CocktailRater\Domain\RecipeList;
 use CocktailRater\Domain\RecipeName;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
+use CocktailRater\FileSystemRepository\FileSystemUserRepository;
 use Slim\Slim;
 use Slim\Views\Twig;
-use CocktailRater\FileSystemRepository\FileSystemUserRepository;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -66,6 +69,8 @@ $app->post('/register', function () use ($app) {
             $app->request->post('email'),
             $app->request->post('password')
         );
+
+        $app->authService->register($user);
     } catch (UsernameTakenException $e) {
         $app->flash('message', 'This username has already been taken');
         $app->redirect('/register');
@@ -79,8 +84,20 @@ $app->get('/login', function () use ($app) {
 });
 
 $app->post('/login', function () use ($app) {
-    $app->flash('message', 'Login Successful');
-    $app->redirect('/recipes');
+    try {
+        $app->authService->logIn(
+            new Username($app->request->post('username')),
+            new Password($app->request->post('password'))
+        );
+
+        $app->flash('message', 'Login Successful');
+
+        $app->redirect('/recipes');
+    } catch (AuthenticationException $e) {
+        $app->flash('message', 'Incorrect username or password');
+
+        $app->redirect('/login');
+    }
 });
 
 

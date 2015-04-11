@@ -3,6 +3,7 @@
 namespace CocktailRater\Domain;
 
 use CocktailRater\Domain\Exception\AuthenticationException;
+use CocktailRater\Domain\Exception\DuplicateEntryException;
 use CocktailRater\Domain\Exception\EntityNotFoundException;
 use CocktailRater\Domain\Exception\UsernameTakenException;
 use CocktailRater\Domain\Specification\AuthenticatedBySpecification;
@@ -11,9 +12,6 @@ final class AuthenticationService
 {
     /** @var UserRepository */
     private $repository;
-
-    /** @var Username */
-    private $usernames = [];
 
     /** @var bool */
     private $loggedIn = false;
@@ -28,11 +26,11 @@ final class AuthenticationService
      */
     public function register(ProspectiveUser $user)
     {
-        if (in_array($user->getUsername(), $this->usernames)) {
+        try {
+            $this->repository->save($user->convertToUser());
+        } catch (DuplicateEntryException $e) {
             throw new UsernameTakenException();
         }
-
-        $this->usernames[] = $user->getUsername();
     }
 
     /**
@@ -41,7 +39,7 @@ final class AuthenticationService
     public function logIn(Username $username, Password $password)
     {
         try {
-            $this->repository->findOneBySpecification(
+            $user = $this->repository->findOneBySpecification(
                 new AuthenticatedBySpecification($username, $password)
             );
 

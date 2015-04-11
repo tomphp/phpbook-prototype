@@ -52,13 +52,9 @@ class CommonContext implements Context, SnippetAcceptingContext
     private $authenticationService;
 
     /**
-     * Initializes context.
-     *
-     * Every scenario gets its own context instance.
-     * You can also pass arbitrary arguments to the
-     * context constructor through behat.yml.
+     * @BeforeScenario
      */
-    public function __construct()
+    public function before()
     {
         $recipeRepository = new FileSystemRecipeRepository(__DIR__ . '/../../test-fsdb');
         $recipeRepository->clear();

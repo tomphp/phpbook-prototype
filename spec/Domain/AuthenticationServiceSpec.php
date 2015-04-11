@@ -4,6 +4,7 @@ namespace spec\CocktailRater\Domain;
 
 use CocktailRater\Domain\Email;
 use CocktailRater\Domain\Exception\AuthenticationException;
+use CocktailRater\Domain\Exception\DuplicateEntryException;
 use CocktailRater\Domain\Exception\EntityNotFoundException;
 use CocktailRater\Domain\Exception\UsernameTakenException;
 use CocktailRater\Domain\Password;
@@ -22,13 +23,25 @@ class AuthenticationServiceSpec extends ObjectBehavior
         $this->beConstructedWith($repository);
     }
 
-    function it_checks_for_duplicate_usernames()
+    function it_stores_registering_user_to_the_repository($repository)
     {
-        $this->register(new ProspectiveUser(
+        $prospectiveUser = new ProspectiveUser(
             new Username('tom'),
             new Email('test1@gmail.com'),
             new Password('dummy_pass')
-        ));
+        );
+
+        $repository->save($prospectiveUser->convertToUser())
+                   ->shouldBeCalled();
+
+        $this->register($prospectiveUser);
+    }
+
+    function it_checks_for_duplicate_usernames($repository)
+    {
+        $repository->save(Argument::any())->willThrow(
+            new DuplicateEntryException(UserRepository::USERNAME, 'tom', UserRepository::class)
+        );
 
         $this->shouldThrow(new UsernameTakenException())
              ->duringRegister(new ProspectiveUser(

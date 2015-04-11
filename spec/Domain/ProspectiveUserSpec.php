@@ -2,23 +2,35 @@
 
 namespace spec\CocktailRater\Domain;
 
+use CocktailRater\Domain\User;
+use CocktailRater\Domain\Username;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use CocktailRater\Domain\Username;
 
 class ProspectiveUserSpec extends ObjectBehavior
 {
-    function it_can_be_constructed_from_values()
+    CONST USERNAME = 'tom';
+
+    function let()
     {
         $this->beConstructedThrough(
             'fromValues',
             [
-                'tom',
+                self::USERNAME,
                 'tom@x2k.co.uk',
                 'topsecret',
             ]
         );
+    }
 
-        $this->getUsername()->shouldBeLike(new Username('tom'));
+    function it_returns_its_username()
+    {
+        $this->getUsername()->shouldBeLike(new Username(self::USERNAME));
+        // @todo Other fields
+    }
+
+    function it_can_be_converted_to_a_user()
+    {
+        $this->convertToUser()->shouldBeLike(new User( new Username(self::USERNAME)));
     }
 }

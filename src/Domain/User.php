@@ -38,6 +38,7 @@ final class User implements Authenticated
 
     public function isAuthenticatedBy(Username $username, Password $password)
     {
+        return $username == $this->username;
     }
 
     /** @return array */

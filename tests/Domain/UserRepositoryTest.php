@@ -2,14 +2,15 @@
 
 namespace tests\CocktailRater\Domain;
 
-use PHPUnit_Framework_TestCase;
-use CocktailRater\Domain\UserRepository;
-use CocktailRater\FileSystemRepository\FileSystemUserRepository;
-use CocktailRater\Domain\Username;
-use CocktailRater\Domain\User;
-use CocktailRater\Domain\Specification\AuthenticatedBySpecification;
-use CocktailRater\Domain\Password;
 use CocktailRater\Domain\Exception\EntityNotFoundException;
+use CocktailRater\Domain\Password;
+use CocktailRater\Domain\Specification\AuthenticatedBySpecification;
+use CocktailRater\Domain\User;
+use CocktailRater\Domain\UserRepository;
+use CocktailRater\Domain\Username;
+use CocktailRater\FileSystemRepository\FileSystemUserRepository;
+use PHPUnit_Framework_TestCase;
+use CocktailRater\Domain\Exception\DuplicateEntryException;
 
 class UserRepositoryTest extends PHPUnit_Framework_TestCase
 {
@@ -27,8 +28,23 @@ class UserRepositoryTest extends PHPUnit_Framework_TestCase
         $this->repository->save(new User(new Username('ted')));
     }
 
+    /**
+     * Detect duplication at repository level to allow for transactional safety.
+     *
+     * @test
+     */
+    function it_throws_for_duplicate_username()
+    {
+        $this->setExpectedException(
+            DuplicateEntryException::class,
+            "Duplicate entry value 'fred' in field 'username' in '" . get_class($this->repository) . "'"
+        );
+
+        $this->repository->save(new User(new Username('fred')));
+    }
+
     /** @test */
-    public function it_fetches_all_recipes()
+    function it_fetches_all_recipes()
     {
         $this->assertCount(2, $this->repository->findAll());
     }

@@ -140,7 +140,7 @@ class ApiContext implements Context, SnippetAcceptingContext
      */
 
     /**
-     * @Then I should should be able to log in to the site as user :username with password :password
+     * @Then I should be able to log in to the site as user :username with password :password
      */
     /*
     public function iShouldShouldBeAbleToLogInToTheSiteAsUserWithPassword(Username $username, Password $password)
