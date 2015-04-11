@@ -129,7 +129,7 @@ $app->get('/api/v1/recipes', function () use ($app) {
             'stars'     => $recipe['stars'],
             '_embedded' => [
                 'user' => [
-                    'name' => $recipe['user']['name']
+                    'username' => $recipe['user']['username']
                 ]
             ]
         ];
@@ -162,7 +162,7 @@ $app->get('/api/v1/recipes/:id', function ($id) use ($app) {
         'method'    => $recipe['method'],
         '_embedded' => [
             'user' => [
-                'name' => $recipe['user']['name']
+                'username' => $recipe['user']['username']
             ]
         ]
     ]);

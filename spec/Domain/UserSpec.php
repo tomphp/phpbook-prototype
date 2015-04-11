@@ -20,7 +20,7 @@ class UserSpec extends ObjectBehavior
 
     function it_returns_view_data()
     {
-        $this->view()->shouldReturn(['name' => self::USERNAME]);
+        $this->view()->shouldReturn(['username' => self::USERNAME]);
     }
 
     function it_returns_data_for_storage()
@@ -28,21 +28,21 @@ class UserSpec extends ObjectBehavior
         $this->setId(new UserId('test_id'));
 
         $this->getForStorage()->shouldReturn([
-            'id'   => 'test_id',
-            'name' => self::USERNAME
+            'id'       => 'test_id',
+            'username' => self::USERNAME
         ]);
     }
 
     function it_can_be_constructed_from_storage_values()
     {
         $this->beConstructedThrough('fromStorageArray', [[
-            'id'   => 'the_id',
-            'name' => 'the_username'
+            'id'       => 'the_id',
+            'username' => 'the_username'
         ]]);
 
         $this->getForStorage()->shouldReturn([
-            'id'   => 'the_id',
-            'name' => 'the_username'
+            'id'       => 'the_id',
+            'username' => 'the_username'
         ]);
     }
 

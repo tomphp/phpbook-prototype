@@ -85,7 +85,7 @@ class DomainContext implements Context, SnippetAcceptingContext
             $this->results,
             function ($recipe) use ($name, $username, $stars) {
                 return $name === $recipe['name']
-                    && $username->getValue() === $recipe['user']['name']
+                    && $username->getValue() === $recipe['user']['username']
                     && $stars->getValue() === $recipe['stars'];
             }
         );

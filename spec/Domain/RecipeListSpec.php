@@ -58,21 +58,21 @@ class RecipeListSpec extends ObjectBehavior
         $results = [
             [
                 'name'                 => 'test recipe 3',
-                'user'                 => ['name'          => 'test user'],
+                'user'                 => ['username' => 'test user'],
                 'stars'                => 5,
                 'measured_ingredients' => [],
                 'method'               => 'test method'
             ],
             [
                 'name'                 => 'test recipe 1',
-                'user'                 => ['name'          => 'test user'],
+                'user'                 => ['username' => 'test user'],
                 'stars'                => 4,
                 'measured_ingredients' => [],
                 'method'               => 'test method'
             ],
             [
                 'name'                 => 'test recipe 2',
-                'user'                 => ['name'          => 'test user'],
+                'user'                 => ['username' => 'test user'],
                 'stars'                => 3,
                 'measured_ingredients' => [],
                 'method'               => 'test method'

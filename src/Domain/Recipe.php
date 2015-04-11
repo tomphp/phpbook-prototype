@@ -139,7 +139,7 @@ final class Recipe implements NamedRecipe, UserOwned
         return [
             'id'                   => $this->id->getValue(),
             'name'                 => $this->name->getValue(),
-            'user'                 => $this->user->view()['name'],
+            'user'                 => $this->user->view()['username'],
             'stars'                => $this->rating->getValue(),
             'measured_ingredients' => $this->ingredients->view(),
             'method'               => $this->method->getValue()

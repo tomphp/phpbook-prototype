@@ -61,7 +61,7 @@ class RecipeSpec extends ObjectBehavior
     {
         $this->view()->shouldReturn([
             'name'                 => self::NAME,
-            'user'                 => ['name' => self::USERNAME],
+            'user'                 => ['username' => self::USERNAME],
             'stars'                => self::STARS,
             'measured_ingredients' => [],
             'method'               => self::METHOD
@@ -88,7 +88,7 @@ class RecipeSpec extends ObjectBehavior
         $this->view()->shouldReturn([
             'id'                   => 'stored_id',
             'name'                 => 'stored_name',
-            'user'                 => ['name' => 'stored_username'],
+            'user'                 => ['username' => 'stored_username'],
             'stars'                => 2,
             'measured_ingredients' => [[
                 'name'     => 'stored ingredient',

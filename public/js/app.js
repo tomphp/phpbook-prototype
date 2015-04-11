@@ -43,7 +43,7 @@ var RecipeList = React.createClass({
     return result._embedded.recipes.map(function (recipe) {
       return {
         name: recipe.name,
-        user: recipe._embedded.user.name,
+        user: recipe._embedded.user.username,
         stars: recipe.stars,
         link: recipe._links.self.href
       }

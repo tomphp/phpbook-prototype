@@ -55,12 +55,12 @@ final class FileSystemUserRepository implements UserRepository
         $matching = array_filter(
             $rows,
             function (array $row) use ($user) {
-                return $row['name'] === $user['name'];
+                return $row['username'] === $user['username'];
             }
         );
 
         if (!empty($matching)) {
-            throw new DuplicateEntryException(self::USERNAME, $user['name'], __CLASS__);
+            throw new DuplicateEntryException(self::USERNAME, $user['username'], __CLASS__);
         }
     }
 }

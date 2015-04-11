@@ -80,7 +80,7 @@ class ApiContext implements Context, SnippetAcceptingContext
 
         $this->response = $recipes->findMatching([
             'name' => $name,
-            ['resource', 'user', ['name' => $username->getValue()]],
+            ['resource', 'user', ['username' => $username->getValue()]],
         ])[0]->getLink('self')->get();
     }
 
@@ -101,7 +101,7 @@ class ApiContext implements Context, SnippetAcceptingContext
     {
         $recipes = $this->response->getResource('recipes')->findMatching([
             'name'  => $name,
-            ['resource', 'user', ['name' => $username->getValue()]],
+            ['resource', 'user', ['username' => $username->getValue()]],
             'stars' => $stars->getValue()
         ]);
 
@@ -114,7 +114,7 @@ class ApiContext implements Context, SnippetAcceptingContext
     public function iShouldBeViewingTheNameUserRatingMeasuredIngredientsAndMethodOfTheRecipe()
     {
         Assert::assertEquals($this->getRecipeName()->getValue(), $this->response->name->getValue());
-        Assert::assertEquals($this->getUser()->view()['name'], $this->response->getResource('user')->name->getValue());
+        Assert::assertEquals($this->getUser()->view()['username'], $this->response->getResource('user')->username->getValue());
         Assert::assertEquals($this->getRating()->getValue(), $this->response->stars->getValue());
         // @todo assertTableMatches()
         //$this->minkContext->assertElementContainsText('.ingredient', $this->getMeasuredIngredientList()->view());

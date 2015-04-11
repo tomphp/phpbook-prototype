@@ -13,7 +13,7 @@ final class User implements Authenticated
     /** @return self */
     public static function fromStorageArray(array $values)
     {
-        $user = new self(new Username($values['name']));
+        $user = new self(new Username($values['username']));
 
         $user->setId(new UserId($values['id']));
 
@@ -44,15 +44,15 @@ final class User implements Authenticated
     /** @return array */
     public function view()
     {
-        return ['name' => $this->username->getValue()];
+        return ['username' => $this->username->getValue()];
     }
 
     /** @return array */
     public function getForStorage()
     {
         return [
-            'id'   => $this->id->getValue(),
-            'name' => $this->username->getValue()
+            'id'       => $this->id->getValue(),
+            'username' => $this->username->getValue()
         ];
     }
 }

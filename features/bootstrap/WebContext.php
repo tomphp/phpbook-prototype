@@ -122,7 +122,7 @@ class WebContext implements Context, SnippetAcceptingContext
     public function iShouldBeViewingTheNameUserRatingMeasuredIngredientsAndMethodOfTheRecipe()
     {
         $this->minkContext->assertElementContainsText('.name', $this->getRecipeName()->getValue());
-        $this->minkContext->assertElementContainsText('.user', $this->getUser()->view()['name']);
+        $this->minkContext->assertElementContainsText('.user', $this->getUser()->view()['username']);
         $this->minkContext->assertElementContainsText('.rating', $this->getRating()->getValue());
         // @todo assertTableMatches()
         //$this->minkContext->assertElementContainsText('.ingredient', $this->getMeasuredIngredientList()->view());
