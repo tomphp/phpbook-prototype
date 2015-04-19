@@ -36,6 +36,7 @@ final class FileSystemUserRepository implements UserRepository
             $user,
             function ($entityData, array $entities) {
                 $this->assertUsernameIsUnique($entityData, $entities);
+                $this->assertEmailIsUnique($entityData, $entities);
             }
         );
     }
@@ -61,6 +62,20 @@ final class FileSystemUserRepository implements UserRepository
 
         if (!empty($matching)) {
             throw new DuplicateEntryException(self::USERNAME, $user['username'], __CLASS__);
+        }
+    }
+
+    private function assertEmailIsUnique($user, array $rows)
+    {
+        $matching = array_filter(
+            $rows,
+            function (array $row) use ($user) {
+                return $row['email'] === $user['email'];
+            }
+        );
+
+        if (!empty($matching)) {
+            throw new DuplicateEntryException(self::EMAIL, $user['email'], __CLASS__);
         }
     }
 }

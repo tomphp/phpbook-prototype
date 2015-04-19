@@ -10,19 +10,26 @@ final class User implements Authenticated
     /** @var Username */
     private $username;
 
+    /** @var Email */
+    private $email;
+
     /** @return self */
     public static function fromStorageArray(array $values)
     {
-        $user = new self(new Username($values['username']));
+        $user = new self(
+            new Username($values['username']),
+            new Email($values['email'])
+        );
 
         $user->setId(new UserId($values['id']));
 
         return $user;
     }
 
-    public function __construct(Username $username)
+    public function __construct(Username $username, Email $email)
     {
         $this->username = $username;
+        $this->email    = $email;
     }
 
     /** @return UserId */
@@ -44,7 +51,10 @@ final class User implements Authenticated
     /** @return array */
     public function view()
     {
-        return ['username' => $this->username->getValue()];
+        return [
+            'username' => $this->username->getValue(),
+            'email'    => $this->email->getValue(),
+        ];
     }
 
     /** @return array */
@@ -52,7 +62,8 @@ final class User implements Authenticated
     {
         return [
             'id'       => $this->id->getValue(),
-            'username' => $this->username->getValue()
+            'username' => $this->username->getValue(),
+            'email'    => $this->email->getValue(),
         ];
     }
 }

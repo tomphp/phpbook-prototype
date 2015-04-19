@@ -2,6 +2,8 @@
 
 namespace tests\CocktailRater\Domain;
 
+use CocktailRater\Domain\Email;
+use CocktailRater\Domain\Exception\DuplicateEntryException;
 use CocktailRater\Domain\Exception\EntityNotFoundException;
 use CocktailRater\Domain\Password;
 use CocktailRater\Domain\Specification\AuthenticatedBySpecification;
@@ -10,7 +12,6 @@ use CocktailRater\Domain\UserRepository;
 use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemUserRepository;
 use PHPUnit_Framework_TestCase;
-use CocktailRater\Domain\Exception\DuplicateEntryException;
 
 class UserRepositoryTest extends PHPUnit_Framework_TestCase
 {
@@ -23,9 +24,15 @@ class UserRepositoryTest extends PHPUnit_Framework_TestCase
 
         $this->repository->clear();
 
-        $this->repository->save(new User(new Username('fred')));
+        $this->repository->save(new User(
+            new Username('fred'),
+            new Email('fred@gmail.com')
+        ));
 
-        $this->repository->save(new User(new Username('ted')));
+        $this->repository->save(new User(
+            new Username('ted'),
+            new Email('ted@gmail.com')
+        ));
     }
 
     /**
@@ -40,7 +47,28 @@ class UserRepositoryTest extends PHPUnit_Framework_TestCase
             "Duplicate entry value 'fred' in field 'username' in '" . get_class($this->repository) . "'"
         );
 
-        $this->repository->save(new User(new Username('fred')));
+        $this->repository->save(new User(
+            new Username('fred'),
+            new Email('jane@gmail.com')
+        ));
+    }
+
+    /**
+     * Detect duplication at repository level to allow for transactional safety.
+     *
+     * @test
+     */
+    function it_throws_for_duplicate_email()
+    {
+        $this->setExpectedException(
+            DuplicateEntryException::class,
+            "Duplicate entry value 'jane' in field 'fred@gmail.com' in '" . get_class($this->repository) . "'"
+        );
+
+        $this->repository->save(new User(
+            new Username('jane'),
+            new Email('fred@gmail.com')
+        ));
     }
 
     /** @test */

@@ -7,6 +7,9 @@ final class ProspectiveUser
     /** @var Username */
     private $username;
 
+    /** @var Email */
+    private $email;
+
     /**
      * @param string $username
      * @param string $email
@@ -29,6 +32,7 @@ final class ProspectiveUser
         Password $password
     ) {
         $this->username = $username;
+        $this->email    = $email;
     }
 
     /**
@@ -38,7 +42,7 @@ final class ProspectiveUser
      */
     public function convertToUser()
     {
-        return new User($this->username);
+        return new User($this->username, $this->email);
     }
 
     /** @return Username */

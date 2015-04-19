@@ -5,6 +5,7 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use CocktailRater\Domain\AuthenticationService;
 use CocktailRater\Domain\Email;
+use CocktailRater\Domain\Exception\EmailTakenException;
 use CocktailRater\Domain\Exception\RegistrationException;
 use CocktailRater\Domain\Exception\UsernameTakenException;
 use CocktailRater\Domain\MeasuredIngredientList;
@@ -139,12 +140,25 @@ class DomainContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Then I should get a :errorName error
+     * @Then I should get a(n) :errorName error
      */
     public function iShouldShouldGetAError($errorName)
     {
-        Assert::assertInstanceOf(UsernameTakenException::class, $this->registrationException);
+        if ('username taken' === $errorName) {
+            Assert::assertInstanceOf(
+                UsernameTakenException::class,
+                $this->registrationException
+            );
+        } elseif ('email taken' === $errorName) {
+            Assert::assertInstanceOf(
+                EmailTakenException::class,
+                $this->registrationException
+            );
+        } else {
+            throw new \Exception('Invalid case');
+        }
     }
+
     private function assertIsSorted(array $list)
     {
         $sorted = $list;

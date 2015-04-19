@@ -1,23 +1,26 @@
 {
     "require": {
         "php": ">=5.5",
-        "beberlei/assert": "~2.3",
-        "behat/mink-extension": "~2.0",
-        "behat/mink-goutte-driver": "~1.1",
-        "slim/slim": "~2.6",
-        "slim/views": "0.1.*",
-        "twig/twig": "~1.18",
-        "tomphp/hal-client": "dev-master"
+        "beberlei/assert": "^2.3",
+        "behat/mink-extension": "^2.0",
+        "behat/mink-goutte-driver": "^1.1",
+        "slim/slim": "^2.6",
+        "slim/views": "^0.1.0",
+        "twig/twig": "^1.18"
     },
     "require-dev": {
         "behat/behat": "3.*",
-        "phpunit/phpunit": "~4.5",
-        "phpspec/phpspec": "2.*@dev",
-        "guzzlehttp/guzzle": "~5.0"
+        "phpunit/phpunit": "^4.6",
+        "phpspec/phpspec": "2.1@dev",
+        "guzzlehttp/guzzle": "^5.0",
+        "tomphp/hal-client": "^0.1"
     },
     "autoload": {
         "psr-4": {
             "CocktailRater\\": "src/"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpspec --ansi run && vendor/bin/phpunit --colors=always && vendor/bin/behat --colors"
     }
 }

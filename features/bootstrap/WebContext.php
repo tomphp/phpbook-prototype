@@ -161,11 +161,19 @@ class WebContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Then I should get a :errorName error
+     * @Then I should get a(n) :errorName error
      */
     public function iShouldShouldGetAError($errorName)
     {
-        $this->minkContext->assertPageContainsText('This username has already been taken');
+        if ('username taken' === $errorName) {
+            $message = 'This username has already been taken';
+        } elseif ('email taken' === $errorName) {
+            $message = 'This email has already been taken';
+        } else {
+            throw new \Exception('Invalid case');
+        }
+
+        $this->minkContext->assertPageContainsText('');
     }
 
     /** @return RecipeList */

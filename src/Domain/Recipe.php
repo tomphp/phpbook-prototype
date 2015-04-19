@@ -53,7 +53,7 @@ final class Recipe implements NamedRecipe, UserOwned
 
         $recipe = new self(
             new RecipeName($data['name']),
-            new User(new Username($data['user'])),
+            new User(new Username($data['user']), new Email($data['email'])), // @todo User real user!
             new Stars($data['stars']),
             new MeasuredIngredientList($ingredients),
             new Method($data['method'])

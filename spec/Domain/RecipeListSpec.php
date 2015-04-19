@@ -2,6 +2,7 @@
 
 namespace spec\CocktailRater\Domain;
 
+use CocktailRater\Domain\Email;
 use CocktailRater\Domain\MeasuredIngredientList;
 use CocktailRater\Domain\Method;
 use CocktailRater\Domain\Recipe;
@@ -19,6 +20,9 @@ use Prophecy\Argument;
 
 class RecipeListSpec extends ObjectBehavior
 {
+    const USERNAME = 'test_user';
+    const EMAIL    = 'test@email.com';
+
     /** @var Recipe */
     private $recipe1;
 
@@ -26,7 +30,7 @@ class RecipeListSpec extends ObjectBehavior
     {
         $this->beConstructedWith($repository);
 
-        $user        = new User(new Username('test user'));
+        $user        = new User(new Username(self::USERNAME), new Email(self::EMAIL));
         $method      = new Method('test method');
         $ingredients = new MeasuredIngredientList([]);
 
@@ -42,7 +46,7 @@ class RecipeListSpec extends ObjectBehavior
 
     public function it_adds_a_recipe_to_the_list($repository)
     {
-        $user        = new User(new Username('test user'));
+        $user        = new User(new Username(self::USERNAME), new Email(self::EMAIL));
         $method      = new Method('test method');
         $ingredients = new MeasuredIngredientList([]);
 
@@ -58,21 +62,21 @@ class RecipeListSpec extends ObjectBehavior
         $results = [
             [
                 'name'                 => 'test recipe 3',
-                'user'                 => ['username' => 'test user'],
+                'user'                 => ['username' => self::USERNAME, 'email' => self::EMAIL],
                 'stars'                => 5,
                 'measured_ingredients' => [],
                 'method'               => 'test method'
             ],
             [
                 'name'                 => 'test recipe 1',
-                'user'                 => ['username' => 'test user'],
+                'user'                 => ['username' => self::USERNAME, 'email' => self::EMAIL],
                 'stars'                => 4,
                 'measured_ingredients' => [],
                 'method'               => 'test method'
             ],
             [
                 'name'                 => 'test recipe 2',
-                'user'                 => ['username' => 'test user'],
+                'user'                 => ['username' => self::USERNAME, 'email' => self::EMAIL],
                 'stars'                => 3,
                 'measured_ingredients' => [],
                 'method'               => 'test method'
@@ -84,7 +88,7 @@ class RecipeListSpec extends ObjectBehavior
 
     public function it_fetches_by_user_and_name($repository)
     {
-        $user = new User(new Username('test user'));
+        $user = new User(new Username(self::USERNAME), new Email(self::EMAIL));
 
         $specification = new AndSpecification(
             new RecipeNameSpecification(new RecipeName('test recipe')),

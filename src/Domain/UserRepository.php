@@ -8,6 +8,7 @@ use CocktailRater\Domain\Specification\Specification;
 interface UserRepository
 {
     const USERNAME = 'username';
+    const EMAIL    = 'email';
 
     /** @throws DuplicateEntryException */
     public function save(User $user);

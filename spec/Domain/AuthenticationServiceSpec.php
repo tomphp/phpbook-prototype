@@ -5,6 +5,7 @@ namespace spec\CocktailRater\Domain;
 use CocktailRater\Domain\Email;
 use CocktailRater\Domain\Exception\AuthenticationException;
 use CocktailRater\Domain\Exception\DuplicateEntryException;
+use CocktailRater\Domain\Exception\EmailTakenException;
 use CocktailRater\Domain\Exception\EntityNotFoundException;
 use CocktailRater\Domain\Exception\UsernameTakenException;
 use CocktailRater\Domain\Password;
@@ -51,6 +52,20 @@ class AuthenticationServiceSpec extends ObjectBehavior
             ));
     }
 
+    function it_checks_for_duplicate_emails($repository)
+    {
+        $repository->save(Argument::any())->willThrow(
+            new DuplicateEntryException(UserRepository::EMAIL, 'test1@gmail.com', UserRepository::class)
+        );
+
+        $this->shouldThrow(new EmailTakenException())
+             ->duringRegister(new ProspectiveUser(
+                new Username('tom'),
+                new Email('test1@gmail.com'),
+                new Password('dummy_pass')
+            ));
+    }
+
     function it_is_not_logged_in_by_default()
     {
         $this->shouldNotBeLoggedIn();
@@ -73,7 +88,7 @@ class AuthenticationServiceSpec extends ObjectBehavior
     {
         $username = new Username('test_user');
         $password = new Password('test_password');
-        $user = new User($username);
+        $user     = new User($username, new Email('test@email.com'));
 
         $specification = new AuthenticatedBySpecification($username, $password);
 

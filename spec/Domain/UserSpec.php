@@ -2,6 +2,7 @@
 
 namespace spec\CocktailRater\Domain;
 
+use CocktailRater\Domain\Email;
 use CocktailRater\Domain\Password;
 use CocktailRater\Domain\UserId;
 use CocktailRater\Domain\Username;
@@ -12,15 +13,22 @@ use Prophecy\Argument;
 class UserSpec extends ObjectBehavior
 {
     const USERNAME = 'test_user';
+    const EMAIL    = 'test@email.com';
 
     function let()
     {
-        $this->beConstructedWith(new Username(self::USERNAME));
+        $this->beConstructedWith(
+            new Username(self::USERNAME),
+            new Email(self::EMAIL)
+        );
     }
 
     function it_returns_view_data()
     {
-        $this->view()->shouldReturn(['username' => self::USERNAME]);
+        $this->view()->shouldReturn([
+            'username' => self::USERNAME,
+            'email'    => self::EMAIL,
+        ]);
     }
 
     function it_returns_data_for_storage()
@@ -29,7 +37,8 @@ class UserSpec extends ObjectBehavior
 
         $this->getForStorage()->shouldReturn([
             'id'       => 'test_id',
-            'username' => self::USERNAME
+            'username' => self::USERNAME,
+            'email'    => self::EMAIL,
         ]);
     }
 
@@ -37,12 +46,14 @@ class UserSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('fromStorageArray', [[
             'id'       => 'the_id',
-            'username' => 'the_username'
+            'username' => 'the_username',
+            'email'    => 'static@email.com',
         ]]);
 
         $this->getForStorage()->shouldReturn([
             'id'       => 'the_id',
-            'username' => 'the_username'
+            'username' => 'the_username',
+            'email'    => 'static@email.com',
         ]);
     }
 

@@ -12,11 +12,13 @@ use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use CocktailRater\Domain\Email;
 
 class RecipeSpec extends ObjectBehavior
 {
     const NAME     = 'test name';
     const USERNAME = 'test_user';
+    const EMAIL    = 'test@email.com';
     const STARS    = 4;
     const METHOD   = 'test method';
 
@@ -24,7 +26,7 @@ class RecipeSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('withNoId', [
             new RecipeName(self::NAME),
-            new User(new Username(self::USERNAME)),
+            new User(new Username(self::USERNAME), new Email('test@email.com')),
             new Stars(self::STARS),
             new MeasuredIngredientList([]),
             new Method(self::METHOD)
@@ -61,7 +63,7 @@ class RecipeSpec extends ObjectBehavior
     {
         $this->view()->shouldReturn([
             'name'                 => self::NAME,
-            'user'                 => ['username' => self::USERNAME],
+            'user'                 => ['username' => self::USERNAME, 'email' => self::EMAIL],
             'stars'                => self::STARS,
             'measured_ingredients' => [],
             'method'               => self::METHOD
@@ -101,27 +103,27 @@ class RecipeSpec extends ObjectBehavior
 
     function it_is_not_owned_by_a_different_user()
     {
-        $this->shouldNotBeOwnedByUser(new User(new Username('different_user')));
+        $this->shouldNotBeOwnedByUser(new User(new Username('different_user'), new Email('test@email.com')));
     }
 
     function it_is_owned_by_the_user()
     {
-        $this->shouldBeOwnedByUser(new User(new Username(self::USERNAME)));
+        $this->shouldBeOwnedByUser(new User(new Username(self::USERNAME), new Email('test@email.com')));
     }
 
     function it_matches_user_and_name()
     {
-        $this->shouldHaveNameAndUser(new RecipeName(self::NAME), new User(new Username(self::USERNAME)));
+        $this->shouldHaveNameAndUser(new RecipeName(self::NAME), new User(new Username(self::USERNAME), new Email('test@email.com')));
     }
 
     function it_does_not_match_user_and_name_if_only_name_matches()
     {
-        $this->shouldNotHaveNameAndUser(new RecipeName(self::NAME), new User(new Username('bad user')));
+        $this->shouldNotHaveNameAndUser(new RecipeName(self::NAME), new User(new Username('bad user'), new Email('test@email.com')));
     }
 
     function it_does_not_match_user_and_name_if_only_user_matches()
     {
-        $this->shouldNotHaveNameAndUser(new RecipeName('bad name'), new User(new Username(self::USERNAME)));
+        $this->shouldNotHaveNameAndUser(new RecipeName('bad name'), new User(new Username(self::USERNAME), new Email('test@email.com')));
     }
 
     function it_checks_if_name_matches()

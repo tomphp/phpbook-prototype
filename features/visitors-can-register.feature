@@ -16,7 +16,6 @@ Feature: Visitors can register
     When I register with the authentication service
     Then I should get a "username taken" error
 
-  @todo
   Scenario: Email address is already taken
     Given there is a user registered with the authenication service with username "tom" and email "tom@example.com"
     And I am a prospective user with username "sam", email "tom@example.com" and password "topsecret"
