@@ -21,6 +21,7 @@ use CocktailRater\Domain\RecipeName;
 use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\Units;
 use CocktailRater\Domain\User;
+use CocktailRater\Domain\UserId;
 use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
 use CocktailRater\FileSystemRepository\FileSystemUserRepository;
@@ -51,20 +52,28 @@ class CommonContext implements Context, SnippetAcceptingContext
     /** @var AuthenticationService */
     private $authenticationService;
 
+    /** @var UserRepository */
+    private $userRepository;
+
+    /** @var User[] */
+    private $users;
+
     /**
      * @BeforeScenario
      */
     public function before()
     {
-        $recipeRepository = new FileSystemRecipeRepository(__DIR__ . '/../../test-fsdb');
-        $recipeRepository->clear();
+        $this->users = [];
 
-        $userRepository = new FileSystemUserRepository(__DIR__ . '/../../test-fsdb');
-        $userRepository->clear();
+        $this->userRepository = new FileSystemUserRepository(__DIR__ . '/../../test-fsdb');
+        $this->userRepository->clear();
+
+        $recipeRepository = new FileSystemRecipeRepository(__DIR__ . '/../../test-fsdb', $this->userRepository);
+        $recipeRepository->clear();
 
         $this->recipeList = new RecipeList($recipeRepository);
 
-        $this->authenticationService = new AuthenticationService($userRepository);
+        $this->authenticationService = new AuthenticationService($this->userRepository);
     }
 
     /**
@@ -97,9 +106,10 @@ class CommonContext implements Context, SnippetAcceptingContext
      */
     public function aRecipeForRatedWithStarsHasBeenAddedToTheRecipeList($recipeName, Stars $stars)
     {
+
         $aRecipe = Recipe::withNoId(
             $recipeName,
-            new User(new Username('dummy_user')),
+            $this->getUserByUsername('dummy_user'),
             $stars,
             new MeasuredIngredientList([]),
             new Method('')
@@ -194,9 +204,17 @@ class CommonContext implements Context, SnippetAcceptingContext
      *
      * @return User
      */
-    public function castToUser($username)
+    public function getUserByUsername($username)
     {
-        return new User(new Username($username));
+        if (!isset($this->users[$username])) {
+            $user = new User(new Username($username), new Email($username . '@email.com'));
+
+            $this->userRepository->save($user);
+
+            $this->users[$username] = $user;
+        }
+
+        return $this->users[$username];
     }
 
     /**

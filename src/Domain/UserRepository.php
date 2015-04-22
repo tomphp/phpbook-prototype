@@ -14,5 +14,8 @@ interface UserRepository
     public function save(User $user);
 
     /** @return User */
+    public function findById(UserId $id);
+
+    /** @return User */
     public function findOneBySpecification(Specification $specification);
 }

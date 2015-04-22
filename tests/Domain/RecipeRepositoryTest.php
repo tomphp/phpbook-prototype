@@ -2,6 +2,7 @@
 
 namespace tests\CocktailRater\Domain;
 
+use CocktailRater\Domain\Email;
 use CocktailRater\Domain\Exception\EntityNotFoundException;
 use CocktailRater\Domain\Exception\TooManyMatchingEntitiesException;
 use CocktailRater\Domain\MeasuredIngredientList;
@@ -16,6 +17,7 @@ use CocktailRater\Domain\Stars;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\Username;
 use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
+use CocktailRater\FileSystemRepository\FileSystemUserRepository;
 use PHPUnit_Framework_TestCase;
 
 class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
@@ -23,18 +25,31 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
     /** @var RecipeRepository */
     private $repository;
 
+    /** @var User */
+    private $user1;
+
+    /** @var User */
+    private $user2;
+
     protected function setUp()
     {
-        $this->repository = new FileSystemRecipeRepository(__DIR__ . '/../../test-fsdb');
+        $userRepository = new FileSystemUserRepository(__DIR__ . '/../../test-fsdb');
+
+        $userRepository->clear();
+
+        $this->user1 = new User(new Username('user1'), new Email('test1@email.com'));
+        $this->user2 = new User(new Username('user2'), new Email('test2@email.com'));
+
+        $userRepository->save($this->user1);
+        $userRepository->save($this->user2);
+
+        $this->repository = new FileSystemRecipeRepository(__DIR__ . '/../../test-fsdb', $userRepository);
 
         $this->repository->clear();
 
-        $user1 = new User(new Username('user1'));
-        $user2 = new User(new Username('user2'));
-
         $this->repository->save(Recipe::withNoId(
             new RecipeName('recipe 1'),
-            $user1,
+            $this->user1,
             new Stars(3),
             new MeasuredIngredientList([]),
             new Method('method 1')
@@ -42,7 +57,7 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
 
         $this->repository->save(Recipe::withNoId(
             new RecipeName('recipe 2'),
-            $user2,
+            $this->user2,
             new Stars(4),
             new MeasuredIngredientList([]),
             new Method('method 2')
@@ -50,7 +65,7 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
 
         $this->repository->save(Recipe::withNoId(
             new RecipeName('recipe 3'),
-            $user1,
+            $this->user1,
             new Stars(5),
             new MeasuredIngredientList([]),
             new Method('method 3')
@@ -87,7 +102,7 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
         );
 
         $this->repository->findOneBySpecification(
-            new UserSpecification(new User(new Username('user1')))
+            new UserSpecification($this->user1)
         );
     }
 
@@ -96,7 +111,7 @@ class RecipeRepositoryTest extends PHPUnit_Framework_TestCase
     {
         $specification = new AndSpecification(
             new RecipeNameSpecification(new RecipeName('recipe 1')),
-            new UserSpecification(new User(new Username('user1')))
+            new UserSpecification($this->user1)
         );
 
         $expected = array_values(array_filter(

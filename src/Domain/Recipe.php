@@ -21,7 +21,7 @@ final class Recipe implements NamedRecipe, UserOwned
     /** @var MeasuredIngredientList[] */
     private $ingredients;
 
-    /** @var string */
+    /** @var Method */
     private $method;
 
     /** @return Recipe */
@@ -42,7 +42,7 @@ final class Recipe implements NamedRecipe, UserOwned
     }
 
     /** @return Recipe */
-    public static function fromStorageArray(array $data)
+    public static function fromStorageArray(array $data, User $user)
     {
         $ingredients = array_map(function ($ingredient) {
             return new MeasuredIngredient(
@@ -53,7 +53,7 @@ final class Recipe implements NamedRecipe, UserOwned
 
         $recipe = new self(
             new RecipeName($data['name']),
-            new User(new Username($data['user']), new Email($data['email'])), // @todo User real user!
+            $user,
             new Stars($data['stars']),
             new MeasuredIngredientList($ingredients),
             new Method($data['method'])
@@ -106,11 +106,6 @@ final class Recipe implements NamedRecipe, UserOwned
     }
      */
 
-    public function hasNameAndUser(RecipeName $name, User $user)
-    {
-        return $name == $this->name && $user == $this->user;
-    }
-
     /*
     public function isHigherRatedThan(self $other)
     {
@@ -139,7 +134,7 @@ final class Recipe implements NamedRecipe, UserOwned
         return [
             'id'                   => $this->id->getValue(),
             'name'                 => $this->name->getValue(),
-            'user'                 => $this->user->view()['username'],
+            'user'                 => $this->user->getId()->getValue(),
             'stars'                => $this->rating->getValue(),
             'measured_ingredients' => $this->ingredients->view(),
             'method'               => $this->method->getValue()

@@ -62,7 +62,7 @@ class UserRepositoryTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             DuplicateEntryException::class,
-            "Duplicate entry value 'jane' in field 'fred@gmail.com' in '" . get_class($this->repository) . "'"
+            "Duplicate entry value 'fred@gmail.com' in field 'email' in '" . get_class($this->repository) . "'"
         );
 
         $this->repository->save(new User(

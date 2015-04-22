@@ -41,6 +41,12 @@ final class FileSystemUserRepository implements UserRepository
         );
     }
 
+    /** @return User */
+    public function findById(UserId $id)
+    {
+        return $this->repository->findById($id);
+    }
+
     public function findAll()
     {
         return $this->repository->findAll();

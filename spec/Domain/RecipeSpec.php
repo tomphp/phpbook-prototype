@@ -13,10 +13,12 @@ use CocktailRater\Domain\Username;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use CocktailRater\Domain\Email;
+use CocktailRater\Domain\UserId;
 
 class RecipeSpec extends ObjectBehavior
 {
     const NAME     = 'test name';
+    const USER_ID  = 'test_user_id';
     const USERNAME = 'test_user';
     const EMAIL    = 'test@email.com';
     const STARS    = 4;
@@ -24,9 +26,12 @@ class RecipeSpec extends ObjectBehavior
 
     function let()
     {
+        $user = new User(new Username(self::USERNAME), new Email('test@email.com'));
+        $user->setId(new UserId(self::USER_ID));
+
         $this->beConstructedThrough('withNoId', [
             new RecipeName(self::NAME),
-            new User(new Username(self::USERNAME), new Email('test@email.com')),
+            $user,
             new Stars(self::STARS),
             new MeasuredIngredientList([]),
             new Method(self::METHOD)
@@ -52,7 +57,7 @@ class RecipeSpec extends ObjectBehavior
         $this->getForStorage()->shouldReturn([
             'id'                   => 'test-id',
             'name'                 => self::NAME,
-            'user'                 => self::USERNAME,
+            'user'                 => self::USER_ID,
             'stars'                => self::STARS,
             'measured_ingredients' => [],
             'method'               => self::METHOD
@@ -72,10 +77,15 @@ class RecipeSpec extends ObjectBehavior
 
     function it_can_be_created_from_a_storage_array()
     {
+        $user = new User(
+            new Username('stored_username'),
+            new Email('stored@email.com')
+        );
+        $user->setId(new UserId('user_id'));
+
         $this->beConstructedThrough('fromStorageArray', [[
             'id'                   => 'stored_id',
             'name'                 => 'stored_name',
-            'user'                 => 'stored_username',
             'stars'                => 2,
             'measured_ingredients' => [[
                 'name'     => 'stored ingredient',
@@ -83,14 +93,14 @@ class RecipeSpec extends ObjectBehavior
                 'units'    => 'ml'
             ]],
             'method'               => 'stored method'
-        ]]);
+        ], $user]);
 
         $this->getId()->shouldBeLike(new RecipeId('stored_id'));
 
         $this->view()->shouldReturn([
             'id'                   => 'stored_id',
             'name'                 => 'stored_name',
-            'user'                 => ['username' => 'stored_username'],
+            'user'                 => $user->view(),
             'stars'                => 2,
             'measured_ingredients' => [[
                 'name'     => 'stored ingredient',
@@ -103,27 +113,18 @@ class RecipeSpec extends ObjectBehavior
 
     function it_is_not_owned_by_a_different_user()
     {
-        $this->shouldNotBeOwnedByUser(new User(new Username('different_user'), new Email('test@email.com')));
+        $user = new User(new Username(self::USERNAME), new Email('test@email.com'));
+        $user->setId(new UserId('different_user_id'));
+
+        $this->shouldNotBeOwnedByUser($user);
     }
 
     function it_is_owned_by_the_user()
     {
-        $this->shouldBeOwnedByUser(new User(new Username(self::USERNAME), new Email('test@email.com')));
-    }
+        $user = new User(new Username(self::USERNAME), new Email('test@email.com'));
+        $user->setId(new UserId(self::USER_ID));
 
-    function it_matches_user_and_name()
-    {
-        $this->shouldHaveNameAndUser(new RecipeName(self::NAME), new User(new Username(self::USERNAME), new Email('test@email.com')));
-    }
-
-    function it_does_not_match_user_and_name_if_only_name_matches()
-    {
-        $this->shouldNotHaveNameAndUser(new RecipeName(self::NAME), new User(new Username('bad user'), new Email('test@email.com')));
-    }
-
-    function it_does_not_match_user_and_name_if_only_user_matches()
-    {
-        $this->shouldNotHaveNameAndUser(new RecipeName('bad name'), new User(new Username(self::USERNAME), new Email('test@email.com')));
+        $this->shouldBeOwnedByUser($user);
     }
 
     function it_checks_if_name_matches()

@@ -2,6 +2,7 @@
 
 use CocktailRater\Domain\AuthenticationService;
 use CocktailRater\Domain\ProspectiveUser;
+use CocktailRater\Domain\Email;
 use CocktailRater\Domain\Exception\AuthenticationException;
 use CocktailRater\Domain\Exception\UsernameTakenException;
 use CocktailRater\Domain\Password;
@@ -29,8 +30,11 @@ $app = new Slim([
 ]);
 
 $dbDir = __DIR__ . '/../test-fsdb';
-$app->recipeList = new RecipeList(new FileSystemRecipeRepository($dbDir));
-$app->authService = new AuthenticationService(new FileSystemUserRepository($dbDir));
+$userRepository = new FileSystemUserRepository($dbDir);
+$recipeRepository = new FileSystemRecipeRepository($dbDir, $userRepository);
+
+$app->recipeList = new RecipeList($recipeRepository);
+$app->authService = new AuthenticationService($userRepository);
 
 $app->hook('slim.before', function () use($app) {
     // @todo really use SESSION?
@@ -49,7 +53,7 @@ $app->get('/recipes', function () use ($app) {
 $app->get('/recipes/:user/:name', function ($user, $name) use ($app) {
     $recipe = $app->recipeList->fetchByNameAndUser(
         new RecipeName($name),
-        new User(new Username($user))
+        new User(new Username($user), new Email('dummy@email.com'))
     );
 
     $app->render(
