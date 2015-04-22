@@ -15,6 +15,7 @@ use CocktailRater\FileSystemRepository\FileSystemRecipeRepository;
 use CocktailRater\FileSystemRepository\FileSystemUserRepository;
 use Slim\Slim;
 use Slim\Views\Twig;
+use CocktailRater\Domain\Specification\UsernameSpecification;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -30,11 +31,11 @@ $app = new Slim([
 ]);
 
 $dbDir = __DIR__ . '/../test-fsdb';
-$userRepository = new FileSystemUserRepository($dbDir);
-$recipeRepository = new FileSystemRecipeRepository($dbDir, $userRepository);
+$app->userRepository = new FileSystemUserRepository($dbDir);
+$app->recipeRepository = new FileSystemRecipeRepository($dbDir, $app->userRepository);
 
-$app->recipeList = new RecipeList($recipeRepository);
-$app->authService = new AuthenticationService($userRepository);
+$app->recipeList = new RecipeList($app->recipeRepository);
+$app->authService = new AuthenticationService($app->userRepository);
 
 $app->hook('slim.before', function () use($app) {
     // @todo really use SESSION?
@@ -51,9 +52,13 @@ $app->get('/recipes', function () use ($app) {
 });
 
 $app->get('/recipes/:user/:name', function ($user, $name) use ($app) {
+    $user = $app->userRepository->findOneBySpecification(
+        new UsernameSpecification(new Username($user))
+    );
+
     $recipe = $app->recipeList->fetchByNameAndUser(
         new RecipeName($name),
-        new User(new Username($user), new Email('dummy@email.com'))
+        $user
     );
 
     $app->render(

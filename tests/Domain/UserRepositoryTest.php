@@ -7,6 +7,7 @@ use CocktailRater\Domain\Exception\DuplicateEntryException;
 use CocktailRater\Domain\Exception\EntityNotFoundException;
 use CocktailRater\Domain\Password;
 use CocktailRater\Domain\Specification\AuthenticatedBySpecification;
+use CocktailRater\Domain\Specification\UsernameSpecification;
 use CocktailRater\Domain\User;
 use CocktailRater\Domain\UserRepository;
 use CocktailRater\Domain\Username;
@@ -114,6 +115,21 @@ class UserRepositoryTest extends PHPUnit_Framework_TestCase
             new Username('ted'),
             new Password('tedspassword')
         );
+
+        $expected = array_values(array_filter(
+            $this->repository->findAll(),
+            function (User $user) use ($specification) {
+                return $specification->isSatisfiedBy($user);
+            }
+        ))[0];
+
+        $this->assertEquals($expected, $this->repository->findOneBySpecification($specification));
+    }
+
+    /** @test */
+    function it_finds_one_by_username()
+    {
+        $specification = new UsernameSpecification(new Username('ted'));
 
         $expected = array_values(array_filter(
             $this->repository->findAll(),

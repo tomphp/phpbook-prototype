@@ -101,4 +101,10 @@ class UserSpec extends ObjectBehavior
 
         $this->shouldNotBeSameAs($other);
     }
+
+    function it_checks_matching_username()
+    {
+        $this->shouldHaveUsername(new Username(self::USERNAME));
+        $this->shouldNotHaveUsername(new Username('wong_name'));
+    }
 }

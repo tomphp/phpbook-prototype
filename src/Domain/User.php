@@ -2,7 +2,7 @@
 
 namespace CocktailRater\Domain;
 
-final class User implements Authenticated
+final class User implements Authenticated, NamedUser
 {
     /** @var UserId */
     private $id;
@@ -48,6 +48,17 @@ final class User implements Authenticated
         return $username == $this->username;
     }
 
+    /** @return bool */
+    public function isSameAs(self $other)
+    {
+        return $this->id == $other->id;
+    }
+
+    public function hasUsername(Username $username)
+    {
+        return $this->username == $username;
+    }
+
     /** @return array */
     public function view()
     {
@@ -65,11 +76,5 @@ final class User implements Authenticated
             'username' => $this->username->getValue(),
             'email'    => $this->email->getValue(),
         ];
-    }
-
-    /** @return bool */
-    public function isSameAs(self $other)
-    {
-        return $this->id == $other->id;
     }
 }

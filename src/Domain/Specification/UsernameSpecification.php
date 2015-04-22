@@ -6,7 +6,7 @@ use Assert\Assertion;
 use CocktailRater\Domain\NamedUser;
 use CocktailRater\Domain\Username;
 
-final class UsernameSpecification
+final class UsernameSpecification implements Specification
 {
     /** @var Username */
     private $username;
