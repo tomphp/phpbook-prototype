@@ -66,4 +66,10 @@ final class User implements Authenticated
             'email'    => $this->email->getValue(),
         ];
     }
+
+    /** @return bool */
+    public function isSameAs(self $other)
+    {
+        return $this->id == $other->id;
+    }
 }

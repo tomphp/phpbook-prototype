@@ -9,6 +9,7 @@ use CocktailRater\Domain\Username;
 use CocktailRater\Domain\ViewableUser;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use CocktailRater\Domain\User;
 
 class UserSpec extends ObjectBehavior
 {
@@ -71,5 +72,33 @@ class UserSpec extends ObjectBehavior
             new Username('wrong_user'),
             new Password('test_password')
         );
+    }
+
+    function it_is_the_same_as_a_user_with_the_same_id()
+    {
+        $id = new UserId('test_id');
+
+        $this->setId($id);
+
+        $other = new User(
+            new Username(self::USERNAME),
+            new Email(self::EMAIL)
+        );
+        $other->setId($id);
+
+        $this->shouldBeSameAs($other);
+    }
+
+    function it_is_not_the_same_as_a_user_with_a_different_id()
+    {
+        $this->setId(new UserId('test_id'));
+
+        $other = new User(
+            new Username(self::USERNAME),
+            new Email(self::EMAIL)
+        );
+        $other->setId(new UserId('different_id'));
+
+        $this->shouldNotBeSameAs($other);
     }
 }
