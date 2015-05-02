@@ -1,38 +1,7 @@
-'use strict';
-
-var RecipeItem = React.createClass({
-  loadRecipe: function (event) {
-    this.props.showRecipe();
-
-    event.preventDefault();
-  },
-
-  render: function () {
-    return (
-      <tr>
-        <td><a href="#" onClick={this.loadRecipe}>{this.props.recipe.name}</a></td>
-        <td>{this.props.recipe.user}</td>
-        <td>{this.props.recipe.stars}</td>
-      </tr>
-    );
-  }
-});
-
-var RecipeDetails = React.createClass({
-  render: function () {
-    if (this.props.recipe == null) {
-      return <div></div>;
-    }
-
-    return (
-        <div>
-          <div>{this.props.recipe.name}</div>
-          <div>{this.props.recipe.stars} stars</div>
-          <div>{this.props.recipe.method}</div>
-        </div>
-    );
-  }
-});
+var $ = require('jquery');
+var React = require('react');
+var RecipeItem = require('./RecipeItem.react');
+var RecipeDetails = require('./RecipeDetails.react');
 
 var RecipeList = React.createClass({
   getInitialState: function () {
@@ -95,14 +64,4 @@ var RecipeList = React.createClass({
   }
 });
 
-var App = React.createClass({
-  render: function () {
-    return (
-      <div>
-        <RecipeList listUrl="/api/v1/recipes" />
-      </div>
-    );
-  }
-});
-
-React.render(<App />, document.getElementById('content'));
+module.exports = RecipeList;

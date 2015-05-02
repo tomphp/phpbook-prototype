@@ -1,8 +1,17 @@
 {
+  "main": "reactjs/app.js",
+  "dependencies": {
+    "flux": "^2.0.3",
+    "react": "^0.13.2"
+  },
   "devDependencies": {
+    "browserify": "^10.0.0",
     "grunt": "^0.4.5",
+    "grunt-browserify": "^3.7.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-phpspec": "0.0.3",
-    "grunt-phpunit": "^0.3.6"
+    "grunt-phpunit": "^0.3.6",
+    "jquery": "^2.1.4",
+    "reactify": "^1.1.0"
   }
 }

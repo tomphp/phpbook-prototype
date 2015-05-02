@@ -3,7 +3,6 @@ Feature: Visitors can log in and become users
   As a visitor
   I must be able to log in
 
-  @todo
   Scenario: Sucessfully logging in
     Given there is a user account with username "tom" and password "topsecret"
     When I login with user "tom" and password "topsecret"

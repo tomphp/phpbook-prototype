@@ -16,10 +16,18 @@ module.exports = (grunt) ->
         bootstrap: 'vendor/autoload.php'
         colors: true
 
-    watch:
-      files: ['src/**/*', 'spec/**/*', 'tests/**/*']
-      tasks: ['phpspec', 'phpunit']
+    browserify:
+      dist:
+        src: ['reactjs/**/*.js']
+        dest: 'public/js/bundle.js'
+        options:
+          transform: ['reactify']
 
+    watch:
+      files: ['src/**/*', 'spec/**/*', 'tests/**/*', 'reactjs/**/*']
+      tasks: ['phpspec', 'phpunit', 'browserify']
+
+  grunt.loadNpmTasks 'grunt-browserify'
   grunt.loadNpmTasks 'grunt-phpspec'
   grunt.loadNpmTasks 'grunt-phpunit'
   grunt.loadNpmTasks 'grunt-contrib-watch'
