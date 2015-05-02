@@ -4,45 +4,13 @@ var RecipeItem = require('./RecipeItem.react');
 var RecipeDetails = require('./RecipeDetails.react');
 
 var RecipeList = React.createClass({
-  getInitialState: function () {
-    return {recipes: [], recipe: null};
-  },
-
-  formatRecipes: function (result) {
-    return result._embedded.recipes.map(function (recipe) {
-      return {
-        name: recipe.name,
-        user: recipe._embedded.user.username,
-        stars: recipe.stars,
-        link: recipe._links.self.href
-      }
-    });
-  },
-
-  componentDidMount: function () {
-    $.get(this.props.listUrl, function (result) {
-      if (this.isMounted()) {
-        this.setState({
-          recipes: this.formatRecipes(result)
-        });
-      }
-    }.bind(this));
-  },
-
   render: function () {
-    var component = this, recipes = this.state.recipes.map(function (recipe) {
-      function showRecipe() {
-        $.get(recipe.link, function (result) {
-          if (component.isMounted()) {
-            component.setState({
-              recipe: result
-            });
-          }
-        });
-      }
+    var keyId = 0;
 
+    var recipes = this.props.recipes.map(function(recipe) {
+      keyId++;
       return (
-        <RecipeItem recipe={recipe} showRecipe={showRecipe} />
+        <RecipeItem key={keyId} recipe={recipe} />
       );
     });
 
@@ -58,7 +26,6 @@ var RecipeList = React.createClass({
             </thead>
             <tbody>{recipes}</tbody>
           </table>
-          <RecipeDetails recipe={this.state.recipe} />
         </div>
     );
   }

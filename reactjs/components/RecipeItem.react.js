@@ -1,8 +1,9 @@
 var React = require('react');
+var RecipeActions = require('../actions/RecipeActions');
 
 var RecipeItem = React.createClass({
   loadRecipe: function (event) {
-    this.props.showRecipe();
+    RecipeActions.selectRecipe(this.props.recipe.link);
 
     event.preventDefault();
   },
