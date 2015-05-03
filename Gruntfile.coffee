@@ -17,8 +17,8 @@ module.exports = (grunt) ->
         colors: true
 
     browserify:
-      dist:
-        src: ['reactjs/**/*.js']
+      bundle:
+        src: ['reactjs/**/*.js', '!reactjs/**/__tests__/*']
         dest: 'public/js/bundle.js'
         options:
           transform: ['reactify']
@@ -31,3 +31,4 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-phpspec'
   grunt.loadNpmTasks 'grunt-phpunit'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-jest'

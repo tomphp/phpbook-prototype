@@ -16,24 +16,24 @@
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     <header>
-        <h1>Cocktail Rater</h1>
-        <div id="user-controls">
-            <a href="/login">Login</a> |
-            <a href="/register">Register</a>
-        </div>
+      <h1>Cocktail Rater</h1>
+      <div id="user-controls">
+        <a href="/login">Login</a> |
+        <a href="/register">Register</a>
+      </div>
     </header>
 
-    {% if message %}
-      <div>{{ message }}</div>
-    {% endif %}
-
     <div id="content">
-        {% block content %}{% endblock %}
+      {% if message %}
+        <div id="message">{{ message }}</div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
     </div>
 
     <footer>
-        This is the demo application for Modern Application Development in PHP<br>
-        &copy; Tom Oram 2015
+      This is the demo application for Modern Application Development in PHP<br>
+      &copy; Tom Oram 2015
     </footer>
   </body>
 </html>

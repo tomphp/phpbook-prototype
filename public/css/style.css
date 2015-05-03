@@ -28,6 +28,19 @@ header h1 {
     text-decoration: none;
 }
 
+#login-popup {
+    position: absolute;
+    background: #660099;
+    width: 300px;
+    right: 10px; 
+    padding: 5px;
+    color: white;
+}
+
+#message {
+    color: red;
+}
+
 #content {
     margin-top: 58pt;
     background-color: #fff;
