@@ -45,6 +45,7 @@ AppDispatcher.register(function(action) {
     default:
       // no op
   }
+  console.log(this);
 });
 
 module.exports = RecipeStore;

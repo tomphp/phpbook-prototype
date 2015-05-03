@@ -28,7 +28,8 @@ header h1 {
     text-decoration: none;
 }
 
-#login-popup {
+#login-popup,
+#register-popup {
     position: absolute;
     background: #660099;
     width: 300px;

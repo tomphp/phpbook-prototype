@@ -1,7 +1,7 @@
 var App = require('./components/App.react');
 var React = require('react');
 var RecipeActions = require('./actions/RecipeActions');
-var UserControls = require('./components/UserControls.react');
+var UserControls = require('./components/user/UserControls.react');
 
 RecipeActions.fetchRecipes();
 
