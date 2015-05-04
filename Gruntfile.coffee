@@ -17,18 +17,27 @@ module.exports = (grunt) ->
         colors: true
 
     browserify:
-      bundle:
+      dev:
         src: ['reactjs/**/*.js', '!reactjs/**/__tests__/*']
         dest: 'public/js/bundle.js'
         options:
           transform: ['reactify']
 
+    sass:
+      dev:
+        files: { 'public/css/style.css': 'public/css/style.scss' }
+
     watch:
-      files: ['src/**/*', 'spec/**/*', 'tests/**/*', 'reactjs/**/*']
-      tasks: ['phpspec', 'phpunit', 'browserify']
+      php:
+        files: ['src/**/*', 'spec/**/*', 'tests/**/*']
+        tasks: ['phpspec', 'phpunit']
+      frontend:
+        files: ['reactjs/**/*', 'public/css/*.scss']
+        tasks: ['browserify:dev', 'sass:dev']
 
   grunt.loadNpmTasks 'grunt-browserify'
   grunt.loadNpmTasks 'grunt-phpspec'
   grunt.loadNpmTasks 'grunt-phpunit'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-jest'
+  grunt.loadNpmTasks 'grunt-contrib-sass'

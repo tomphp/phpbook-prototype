@@ -1,4 +1,7 @@
 vendor
 public/components
 public/js/bundle.js
+public/css/style.css
+public/css/style.css.map
 node_modules
+.sass-cache
