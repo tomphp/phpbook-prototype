@@ -5,7 +5,6 @@ var UserStore = require('../../stores/UserStore');
 var UserActions = require('../../actions/UserActions');
 
 function getUserState() {
-  console.log('getting state');
   return {
     showLogin: UserStore.getShowLogin(),
     showRegister: UserStore.getShowRegister(),
@@ -52,7 +51,6 @@ var UserControls = React.createClass({
   },
 
   _onChange: function() {
-    console.log(this.state);
     this.setState(getUserState());
   },
 });
