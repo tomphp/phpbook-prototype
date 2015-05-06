@@ -43,7 +43,7 @@ class RecipeSpec extends ObjectBehavior
         $this->getId()->shouldReturn(null);
     }
 
-    function it_can_have_its_it_set()
+    function it_can_have_its_id_set()
     {
         $this->setId(new RecipeId('test-id'));
 
