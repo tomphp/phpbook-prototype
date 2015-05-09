@@ -1,7 +1,7 @@
 # @todo Register over api
 @no-api
 Feature: Visitors can register
-  In to rate and contribute fantastic cocktail recipes
+  In order to rate and contribute fantastic cocktail recipes
   As a visitor
   I want to become a registered user
 
